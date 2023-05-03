@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ProductController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    table { border: 1px solid black; border-collapse: collapse; }
+    table td { border: 1px solid black; padding: 4px 8px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Товарный каталог!</h1>
+    <table>
+        <tr>
+            <td>Наименование</td>
+            <td>Размер</td>
+            <td>Цена</td>
+        </tr>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.size }}</td>
+                <td>{{ product.price }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
+{% endblock %}
