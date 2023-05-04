@@ -63,14 +63,4 @@ class Article
         $this->createdAt = $createdAt;
         return $this;
     }
-
-    public function removeComment(text $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            if ($comment->getArticle() === $this) {
-                $comment->setArticle(null);
-            }
-        }
-        return $this;
-    }
 }
