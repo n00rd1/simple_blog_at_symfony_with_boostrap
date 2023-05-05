@@ -20,6 +20,14 @@ class Article
 //    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", onDelete: "RESTRICT", onUpdate: "CASCADE", nullable: false)]
     private ?int $author_id = null;
 
+    //  ---
+    //
+    // ЛИБО АЛЬТЕРНАТИВНЫЙ ВАРИАНТ
+    //  #[ORM\ManyToOne(targetEntity: User::class)]
+    //  #[ORM\JoinColumn(nullable: false)]
+    //   private User $author = null;
+    //  ---
+
     #[ORM\Column(type: "text")]
     private ?string $text = null;
 
