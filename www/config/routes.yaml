@@ -1,3 +1,24 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+users_create:
+    path: /users
+    controller: App\Controller\UsersController::createUser
+    methods: [POST]
+
+users_get:
+    path: /users/{id}
+    controller: App\Controller\UsersController::getUser
+    methods: [GET]
+
+users_update:
+    path: /users/{id}
+    controller: App\Controller\UsersController::updateUser
+    methods: [PUT]
+
+users_delete:
+    path: /users/{id}
+    controller: App\Controller\UsersController::deleteUser
+    methods: [DELETE]
+
