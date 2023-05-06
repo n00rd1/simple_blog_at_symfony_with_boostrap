@@ -30,11 +30,11 @@ class UsersController extends AbstractController
         $user = new User();
 
         // Задаём данные пользователя
-        $user->setName($data['username']);
-        $user->setEmail($data['email']);
-        $user->setPassword(password_hash($data['password'], PASSWORD_ARGON2I));;
+        $user->setUsername($data['username']);
+        $user->setPassword_hash(password_hash($data['password'], PASSWORD_ARGON2I));;
         $user->setName($data['name']);
-
+        $user->setSurname($data['surname']);
+        $user->setAuth_token(bin2hex(random_bytes(64)));
         $userRepository->save($user, true);
 
         return new Response(sprintf('User %s successfully created', $user->getEmail()));
@@ -50,18 +50,24 @@ class UsersController extends AbstractController
             return new Response(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
+        // Я пока своё не придумал, а принцип работы сгенерированного кода - не понял =(
+
+
+
+/*      // ---  Made by ChatGPT
         // Получаем данные пользователя из тела запроса
         $userDTO = UserDTO::createFromJson($request->getContent());
 
         // Обновляем данные пользователя
-        $user->setName($userDTO->name);
+        $user->setUsername($userDTO->username);
         $user->setEmail($userDTO->email);
-
+*/
         // Сохраняем изменения в базе данных
         $userRepository->save($user, true);
 
         // Возвращаем ответ в виде JSON
         return new Response(['message' => 'User updated successfully'], Response::HTTP_OK);
+
     }
 
     /**
