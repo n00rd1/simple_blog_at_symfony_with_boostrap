@@ -11,7 +11,7 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>Лист с Блогами!"</h1>
+        <h1>Лист с Блогами!</h1>
         <table>
             <tr>
                 <td>Уникальный ключ</td>
@@ -20,10 +20,12 @@
                 <td>Дата создания комментария</td>
             </tr>
             {% for article in articles %}
-                <td>{{ article.id }}</td>
-                <td>{{ article.author_id }}</td>
-                <td>{{ article.text }}</td>
-                <td>{{ article.created_at }}</td>
+                <tr>
+                    <td>{{ article.id }}</td>
+                    <td>{{ article.author.username }}</td>
+                    <td>{{ article.text }}</td>
+                    <td>{{ article.createdAt.format("d.m.Y H:i") }}</td>
+                </tr>
             {% endfor %}
         </table>
     </div>
