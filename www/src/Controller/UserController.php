@@ -23,7 +23,7 @@ class UserController extends AbstractController
     {
         $users = $entityManager->getRepository(User::class)->findAll();
 
-        return $this->render('user/index.html.twig', [
+        return $this->render('user/usr_list.html.twig', [
             'controller_name' => 'UserController',
             'users' => $users,
         ]);
@@ -32,7 +32,7 @@ class UserController extends AbstractController
     #[Route('/user/create', name: 'user_create')]
     public function add(): Response
     {
-        return $this->render('user/index.html.twig', [
+        return $this->render('user/usr_list.html.twig', [
             'controller_name' => 'UserController',
             'user_string' =>'USER ADD',
         ]);
@@ -57,7 +57,7 @@ class UserController extends AbstractController
 
 /*
 class UsersController extends AbstractController
-{
+//{
 
     public function createUser(Request $request, UserRepository $userRepository): Response
     {

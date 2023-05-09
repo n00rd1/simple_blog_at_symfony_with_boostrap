@@ -21,9 +21,9 @@ class CommentController extends AbstractController
     #[Route('/comment', name: 'app_comment')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        $comments = $entityManager->getRepository(Comment::class)->findAll();
+        $comments = $entityManager->getRepository(Comments::class)->findAll();
 
-        return $this->render('comment/index.html.twig', [
+        return $this->render('comment/com_list.html.twig', [
             'controller_name' => 'CommentController',
             'comments' => $comments,
         ]);
@@ -32,7 +32,7 @@ class CommentController extends AbstractController
     #[Route('/comment/create', name: 'comment_create')]
     public function add():Response
     {
-        return $this->render('comment/inde.html.twig', [
+        return $this->render('comment/com_list.html.twig', [
             'controller_name' => 'CommentController',
             'comment_string' => 'COMMENT ADD',
         ]);

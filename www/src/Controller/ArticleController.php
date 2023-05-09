@@ -18,12 +18,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class ArticleController extends AbstractController
 {
-    #[Route('/aticle', name: 'app_article')]
+    #[Route('/article', name: 'app_article')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $articles = $entityManager->getRepository(Article::class)->findAll();
 
-        return $this->render('article/index.html.twig', [
+        return $this->render('article/article_list.html.twig', [
             'controller_name' => 'ArticleController',
             'articles' => $articles,
         ]);
@@ -32,7 +32,7 @@ class ArticleController extends AbstractController
     #[Route('/article/add', name: 'article_add')]
     public function add() : Response
     {
-        return $this->render('article/index.html.twig', [
+        return $this->render('article/article_list.html.twig', [
            'controller_name' => 'ArticleController',
            'test_string' =>  'ARTICLE ADD',
         ]);
