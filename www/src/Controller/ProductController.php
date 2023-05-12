@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,11 +24,18 @@ class ProductController extends AbstractController
     }
 
     #[Route('/product/add', name: 'product_add')]
-    public function add(): Response
+    public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('product/index.html.twig', [
-            'controller_name' => 'ProductController',
-            'test_string' =>'PRODUCT ADD',
-        ]);
+        // TODO валидация входных данных
+
+        $product = new Product();
+        $product->setName($request->get('name'));
+        $product->setPrice($request->get('price'));
+        $product->setSize($request->get('size'));
+        $entityManager->persist($product);
+        $entityManager->flush();
+
+
+        return $this->json(['product_id' => $product->getId()]);
     }
 }
