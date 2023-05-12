@@ -30,12 +30,24 @@ class CommentController extends AbstractController
     }
 
     #[Route('/comment/create', name: 'comment_create')]
-    public function add():Response
+    public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('comment/com_list.html.twig', [
+        // TODO валидация входных данных
+
+        $comment = new Comment();
+        $comment->setComment($request->get('comment'));
+        $comment->setAuthor($request->get('author'));
+        $comment->setArticle($request->get('article'));
+        $entityManager->persist($comment);
+        $entityManager->flush();
+
+
+        return $this->json(['comment_id' => $comment->getId()]);
+
+/*        return $this->render('comment/com_list.html.twig', [
             'controller_name' => 'CommentController',
             'comment_string' => 'COMMENT ADD',
-        ]);
+        ]);*/
     }
 
     #[Route('/comment/{id}/delete', name: 'comment_delete')]

@@ -30,12 +30,22 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/article/add', name: 'article_add')]
-    public function add() : Response
+    public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('article/article_list.html.twig', [
+        // TODO валидация входных данных
+
+        $article = new Article();
+        $article->setAuthor($request->get('author'));
+        $article->setText($request->get('text'));
+        $entityManager->persist($article);
+        $entityManager->flush();
+
+        return $this->json(['article_id' => $article->getId()]);
+
+/*        return $this->render('article/article_list.html.twig', [
            'controller_name' => 'ArticleController',
            'test_string' =>  'ARTICLE ADD',
-        ]);
+        ]);*/
     }
 
     #[Route('/article/{id}/delete', name: 'article_delete')]

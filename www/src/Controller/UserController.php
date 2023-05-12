@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,12 +31,27 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/create', name: 'user_create')]
-    public function add(): Response
+    public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('user/usr_list.html.twig', [
+        // TODO валидация входных данных
+
+        $user = new User();
+        $user->setUsername($request->get('username'));
+        $user->setPassword_hash(password_hash($request->get('password'), PASSWORD_ARGON2I));;
+        $user->setName($request->get('name'));
+        $user->setSurname($request->get('surname'));
+        $user->setAuth_token(bin2hex(random_bytes(64)));
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+
+        return $this->json(['user_id' => $user->getId()]);
+
+/*        return $this->render('user/usr_list.html.twig', [
             'controller_name' => 'UserController',
             'user_string' =>'USER ADD',
-        ]);
+        ]);*/
     }
 
 /*    #[Route('/user/{id}/delete', name: 'user_delete')]
@@ -50,7 +66,7 @@ class UserController extends AbstractController
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_product');
+        return $this->redirectToRoute('app_user');
     }
 
 }
