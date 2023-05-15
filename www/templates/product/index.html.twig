@@ -2,69 +2,76 @@
 
 {% block title %}Hello ProductController!{% endblock %}
 
+{% block header %}
+    <li><a href="http://symfony.local:8080/article" class="nav-link px-2">Главная</a></li>
+    <li><a href="http://symfony.local:8080/user" class="nav-link px-2">Пользователи</a></li>
+    <li><a href="#" class="nav-link px-2">Мой профиль</a></li>
+    <li><a href="http://symfony.local:8080/product" class="nav-link px-2 link-secondary">test_page</a></li>
+{% endblock %}
+
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    table { border: 1px solid black; border-collapse: collapse; }
-    table td { border: 1px solid black; padding: 4px 8px; }
-</style>
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+        table { border: 1px solid black; border-collapse: collapse; }
+        table td { border: 1px solid black; padding: 4px 8px; }
+    </style>
 
-<div class="example-wrapper">
-    <h1>Товарный каталог!</h1>
-    <table>
-        <tr>
-            <td>Наименование</td>
-            <td>Размер</td>
-            <td>Цена</td>
-        </tr>
-        {% for product in products %}
+    <div class="example-wrapper">
+        <h1>Товарный каталог!</h1>
+        <table>
             <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.size }}</td>
-                <td>{{ product.price }}</td>
+                <td>Наименование</td>
+                <td>Размер</td>
+                <td>Цена</td>
             </tr>
-        {% endfor %}
-    </table>
-    <div style="padding: 10px">
-        <button class="btn btn-lg btn-primary js-btn1">Кнопка 1</button>
-        <button class="btn btn-lg btn-danger" id="btn2">Кнопка 2</button>
-    </div>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.size }}</td>
+                    <td>{{ product.price }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div style="padding: 10px">
+            <button class="btn btn-lg btn-primary js-btn1">Кнопка 1</button>
+            <button class="btn btn-lg btn-danger" id="btn2">Кнопка 2</button>
+        </div>
 
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
-        Добавить товар
-    </button>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            Добавить товар
+        </button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Добавление товара</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="productNameInput" class="form-label">Наименование товара</label>
-                        <input type="text" class="form-control" id="productNameInput" placeholder="Например: джинсы летние">
+        <!-- Modal -->
+        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addProductModalLabel">Добавление товара</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="mb-3">
-                        <label for="productPriceInput" class="form-label">Стоимость товара</label>
-                        <input type="number" class="form-control" id="productPriceInput" placeholder="1000">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="productNameInput" class="form-label">Наименование товара</label>
+                            <input type="text" class="form-control" id="productNameInput" placeholder="Например: джинсы летние">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productPriceInput" class="form-label">Стоимость товара</label>
+                            <input type="number" class="form-control" id="productPriceInput" placeholder="1000">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productSizeInput" class="form-label">Размер</label>
+                            <input type="number" class="form-control" id="productSizeInput" placeholder="38">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="productSizeInput" class="form-label">Размер</label>
-                        <input type="number" class="form-control" id="productSizeInput" placeholder="38">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary" id="addProductSendButton">Добавить</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="addProductSendButton">Добавить</button>
                 </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>
 {% endblock %}

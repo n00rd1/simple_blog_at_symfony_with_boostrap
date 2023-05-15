@@ -47,18 +47,7 @@ class UserController extends AbstractController
 
 
         return $this->json(['user_id' => $user->getId()]);
-
-/*        return $this->render('user/usr_list.html.twig', [
-            'controller_name' => 'UserController',
-            'user_string' =>'USER ADD',
-        ]);*/
     }
-
-/*    #[Route('/user/{id}/delete', name: 'user_delete')]
-    public function remove(): Response
-    {
-        return $this->render();
-    }*/
 
     #[Route('/user/{id}/delete', name: 'user_delete')]
     public function delete(User $user, EntityManagerInterface $entityManager): Response

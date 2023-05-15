@@ -16,15 +16,99 @@
 {#        {% block javascripts %}#}
 {#            {{ encore_entry_script_tags('app') }}#}
 {#        {% endblock %}#}
+
+        <div class="header_menu">
+            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+                <div class="col-md-3 mb-2 mb-md-0">
+                    <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+                        <svg class="bi" width="40" height="32" role="img" aria-label="Blogify"><use xlink:href="#Blogify"></use></svg>
+                    </a>
+                </div>
+
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    {% block header %}{% endblock %}
+                </ul>
+
+                <!-- Кнопки авторизации и регистрации -->
+                <div class="col-md-3 text-end">
+                    <button type="button" class="btn btn-outline-primary me-2" id="loginUserButton" data-bs-toggle="modal" data-bs-target="#loginUserModal">Войти</button>
+                    <button type="button" class="btn btn-primary px-2 ms-1 me-5" id="createUserButton" data-bs-toggle="modal" data-bs-target="#createUserModal">Зарегистрироваться</button>
+                </div>
+
+                <!-- Modal registration-->
+                <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="createUserModalLabel">Регистрация нового пользователя</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="userUsernameInput" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="userUsernameInput" placeholder="Ivan555">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userPasswordInput" class="form-label">Password</label>
+                                    <input type="text" class="form-control" id="userPasswordInput" placeholder="******">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userNameInput" class="form-label">Имя</label>
+                                    <input type="text" class="form-control" id="userNameInput" placeholder="Иван">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userSurnameInput" class="form-label">Фамилия</label>
+                                    <input type="text" class="form-control" id="userSurnameInput" placeholder="Петров">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Выйти</button>
+                                <button type="button" class="btn btn-primary" id="createUserButton">Загистрироваться</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal authorization -->
+                <div class="modal fade" id="loginUserModal" tabindex="-1" aria-labelledby="loginUserModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="loginUserModalLabel">Войти в аккаунт</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="userUsernameInput" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="userUsernameInput">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userPasswordInput" class="form-label">Password</label>
+                                    <input type="text" class="form-control" id="userPasswordInput">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Выйти</button>
+                                <button type="button" class="btn btn-primary" id="loginUserButton">Загистрироваться</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </header>
+        </div>
     </head>
     <body>
         {% block body %}{% endblock %}
     </body>
-    <footer align="center">
-        <p>&copy; 2023 Все права защищены</p>
-        <p>Связаться со мной:</p>
-        <a href="https://t.me/gold_shark"><i class="fab fa-telegram"><h6>Телеграмм</h6></i></a>
-        <a href="mailto:mukhamedshin13@gmail.com"><i class="fas fa-envelope"><h6>Почта</h6></i></a>
-    </footer>
 
+    <!-- Добавить смещение в самый низ страницы -->
+    <footer class="mt-5 py-2 my-3 border-top">
+        <p class="text-center text-body-secondary">© 2023 Blogify Company, Inc</p>
+        <ul class="nav justify-content-center">
+            <li class="nav-item"><a href="https://t.me/gold_shark" class="nav-link px-2 text-body-secondary">Телеграмм</a></li>
+            <li class="nav-item"><a href="mailto:mukhamedshin13@gmail.com" class="nav-link px-2 text-body-secondary">Почта</a></li>
+            <li class="nav-item"><a href="https://github.com/n00rd1/simple_blog_at_symfony_with_boostrap" class="nav-link px-2 text-body-secondary">Guthub</a></li>
+        </ul>
+    </footer>
 </html>

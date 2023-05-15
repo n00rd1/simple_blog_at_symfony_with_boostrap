@@ -2,6 +2,13 @@
 
 {% block title %}Список постов в блоге!{% endblock %}
 
+{% block header %}
+    <li><a href="http://symfony.local:8080/article" class="nav-link px-2 link-secondary">Главная</a></li>
+    <li><a href="http://symfony.local:8080/user" class="nav-link px-2">Пользователи</a></li>
+    <li><a href="#" class="nav-link px-2">Мой профиль</a></li>
+    <li><a href="http://symfony.local:8080/product" class="nav-link px-2">test_page</a></li>
+{% endblock %}
+
 {% block body %}
     <style>
         .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
