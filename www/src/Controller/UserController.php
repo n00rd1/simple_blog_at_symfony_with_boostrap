@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 // Для работы с HTTP кодом
+use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 // Для хеширования пароля
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class UserController extends AbstractController
@@ -31,22 +33,44 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/create', name: 'user_create')]
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
         // TODO валидация входных данных
 
+
         $user = new User();
         $user->setUsername($request->get('username'));
-        $user->setPassword_hash(password_hash($request->get('password'), PASSWORD_ARGON2I));;
+        $user->setPassword_hash(md5($request->get('password')));;
         $user->setName($request->get('name'));
         $user->setSurname($request->get('surname'));
-        $user->setAuth_token(bin2hex(random_bytes(64)));
+        $user->setAuth_token(bin2hex(random_bytes(32)));
 
         $entityManager->persist($user);
         $entityManager->flush();
 
 
         return $this->json(['user_id' => $user->getId()]);
+    }
+
+    #[Route('/user/login', name: 'user_login')]
+    public function login(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // TODO валидация данных
+
+        $userId = new User();
+        // TODO добавить получение информации
+
+
+        // TODO добавить сравнение md5 введённого пароля и пароля из базы данных
+/*      if(md5($password) === $password_user)
+        {
+
+            //echo "<br> Correct password ";
+        }
+        else {
+
+            //echo "<br> Incorrect password ";
+        }*/
     }
 
     #[Route('/user/{id}/delete', name: 'user_delete')]

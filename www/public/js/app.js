@@ -39,7 +39,7 @@ $(document).ready(function () {
 
     // Для работы с авторизацией
     $('#loginUserSendButton').click(function () {
-        $.ajax('/user/add', {
+        $.ajax('/user/login', {
             'method': 'POST',
             'dataType': 'json',
             'data': {
@@ -48,6 +48,22 @@ $(document).ready(function () {
             },
             success: function (response, status) {
                 alert("Авторизация успешна!");
+                location.reload();
+            }
+        });
+    });
+
+    // Для создания блога
+    $('#addArticleSendButton').click(function () {
+        $.ajax('/article/add', {
+            'method': 'POST',
+            'dataType': 'json',
+            'data': {
+                'author_id': $('#createArticleModal #articleAuthoridInput').val(),
+                'text': $('#createArticleModal #articleTextInput').val(),
+            },
+            success: function (response, status) {
+                alert("Блог успешно опубликован>!");
                 location.reload();
             }
         });
