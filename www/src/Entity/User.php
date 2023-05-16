@@ -63,7 +63,7 @@ class User
 
     public function setSurname(string $surname): self
     {
-        $this->name = $surname;
+        $this->surname = $surname;
         return $this;
     }
 

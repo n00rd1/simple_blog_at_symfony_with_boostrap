@@ -20,7 +20,7 @@ $(document).ready(function () {
     });
 
     // Для работы с регистрацией
-    $('#createUserButton').click(function () {
+    $('#createUserSendButton').click(function () {
         $.ajax('/user/create', {
             'method': 'POST',
             'dataType': 'json',
@@ -38,7 +38,7 @@ $(document).ready(function () {
     });
 
     // Для работы с авторизацией
-    $('#loginUserButton').click(function () {
+    $('#loginUserSendButton').click(function () {
         $.ajax('/user/add', {
             'method': 'POST',
             'dataType': 'json',
