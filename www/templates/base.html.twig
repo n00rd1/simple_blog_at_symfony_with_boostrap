@@ -29,11 +29,15 @@
                     {% block header %}{% endblock %}
                 </ul>
 
-                <!-- Кнопки авторизации и регистрации -->
-                <div class="col-md-3 text-end">
-                    <button type="button" class="btn btn-outline-primary me-2" id="loginUserButton" data-bs-toggle="modal" data-bs-target="#loginUserModal">Войти</button>
-                    <button type="button" class="btn btn-primary px-2 ms-1 me-5" id="createUserButton" data-bs-toggle="modal" data-bs-target="#createUserModal">Зарегистрироваться</button>
-                </div>
+                {% if app.user %}
+                    <p>Привет, {{ app.user.username }}!</p>
+                {% else %}
+                    <!-- Кнопки авторизации и регистрации -->
+                    <div class="col-md-3 text-end">
+                        <button type="button" class="btn btn-outline-primary me-2" id="loginUserButton" data-bs-toggle="modal" data-bs-target="#loginUserModal">Войти</button>
+                        <button type="button" class="btn btn-primary px-2 ms-1 me-5" id="createUserButton" data-bs-toggle="modal" data-bs-target="#createUserModal">Зарегистрироваться</button>
+                    </div>
+                {% endif %}
 
                 <!-- Modal registration-->
                 <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
@@ -45,21 +49,21 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="userUsernameInput" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="userUsernameInput" placeholder="Ivan555">
+                                    <label for="createUserUsernameInput" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="createUserUsernameInput" placeholder="Ivan555">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="userPasswordInput" class="form-label">Password</label>
+                                    <label for="createUserPasswordInput" class="form-label">Password</label>
                                     <!-- для закрытого типа стоит использовать password -->
-                                    <input type="text" class="form-control" id="userPasswordInput" placeholder="******">
+                                    <input type="text" class="form-control" id="createUserPasswordInput" placeholder="******">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="userNameInput" class="form-label">Имя</label>
-                                    <input type="text" class="form-control" id="userNameInput" placeholder="Иван">
+                                    <label for="createUserNameInput" class="form-label">Имя</label>
+                                    <input type="text" class="form-control" id="createUserNameInput" placeholder="Иван">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="userSurnameInput" class="form-label">Фамилия</label>
-                                    <input type="text" class="form-control" id="userSurnameInput" placeholder="Петров">
+                                    <label for="createUserSurnameInput" class="form-label">Фамилия</label>
+                                    <input type="text" class="form-control" id="createUserSurnameInput" placeholder="Петров">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -80,12 +84,12 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="userUsernameInput" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="userUsernameInput">
+                                    <label for="loginUserUsernameInput" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="loginUserUsernameInput">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="userPasswordInput" class="form-label">Password</label>
-                                    <input type="text" class="form-control" id="userPasswordInput">
+                                    <label for="loginUserPasswordInput" class="form-label">Password</label>
+                                    <input type="text" class="form-control" id="loginUserPasswordInput">
                                 </div>
                             </div>
                             <div class="modal-footer">

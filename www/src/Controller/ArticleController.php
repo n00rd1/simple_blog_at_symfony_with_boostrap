@@ -34,9 +34,12 @@ class ArticleController extends AbstractController
     {
         // TODO валидация входных данных
 
+
+
         $article = new Article();
         $article->setAuthor($request->get('author'));
         $article->setText($request->get('text'));
+
         $entityManager->persist($article);
         $entityManager->flush();
 

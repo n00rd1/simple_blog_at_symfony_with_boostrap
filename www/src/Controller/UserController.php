@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
 
 // Для работы с HTTP кодом
@@ -21,6 +22,47 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class UserController extends AbstractController
 {
+    const LENGTH_AUTH_TOKEN = 32;
+    const MIN_LENGTH_USERNAME = 4;
+    const MAX_LENGTH_USERNAME = 64;
+
+    const MIN_LENGTH_PASSWORD = 4;
+    const MAX_LENGTH_PASSWORD = 64;
+
+    const MIN_LENGTH_NAME = 3;
+    const MAX_LENGTH_NAME = 64;
+
+    const MIN_LENGTH_SURNAME = 4;
+    const MAX_LENGTH_SURNAME = 64;
+
+    private function validateField($field, $minLength, $maxLength, $fieldName) {
+        if (empty($field)) {                            // Проверка на пустоту поля
+            return [
+                'success' => false,
+                'data' => [],
+                'error' => "Не заполнено поле с $fieldName",
+            ];
+        }
+
+        if (mb_strlen($field) < $minLength) {           // Проверка минимальной длины
+            return [
+                'success' => false,
+                'data' => [],
+                'error' => "Поле с $fieldName должно быть не менее $minLength символов",
+            ];
+        }
+
+        if (mb_strlen($field) > $maxLength) {           // Проверка максимальной длины
+            return [
+                'success' => false,
+                'data' => [],
+                'error' => "Поле с $fieldName должно быть не более $maxLength символов",
+            ];
+        }
+
+        return null;                                    // Если все проверки пройдены, возвращаем null
+    }
+
     #[Route('/user', name: 'app_user')]
     public function index(EntityManagerInterface $entityManager): Response
     {
@@ -35,19 +77,72 @@ class UserController extends AbstractController
     #[Route('/user/create', name: 'user_create')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // TODO валидация входных данных
+        $username = $request->get('username');
+        $password = $request->get('password');
+        $name = $request->get('name');
+        $surname = $request->get('surname');
+
+        // Валидация логина
+        $usernameValidationResult = $this->validateField($username, self::MIN_LENGTH_USERNAME, self::MAX_LENGTH_USERNAME, 'логином');
+        if ($usernameValidationResult) {
+            return $this->json($usernameValidationResult);
+        }
+
+        // Проверка уникальности имени пользователя
+        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
+        if ($existingUser) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Пользователь с таким логином уже существует',
+            ]);
+        }
+
+        // Валидация пароля
+        $passwordValidationResult = $this->validateField($password, self::MIN_LENGTH_PASSWORD, self::MAX_LENGTH_PASSWORD, 'паролем');
+        if ($passwordValidationResult) {
+            return $this->json($passwordValidationResult);
+        }
+
+        // Валидация имени пользователя
+        $nameValidationResult = $this->validateField($name, self::MIN_LENGTH_NAME, self::MAX_LENGTH_NAME, 'именем');
+        if ($nameValidationResult) {
+            return $this->json($nameValidationResult);
+        }
+
+        // Валидация фамилии пользователя
+        $surnameValidationResult = $this->validateField($surname, self::MIN_LENGTH_SURNAME, self::MAX_LENGTH_SURNAME, 'фамилией');
+        if ($surnameValidationResult) {
+            return $this->json($surnameValidationResult);
+        }
+
+        // Перевод пароля в необходимый формат для дальнейшего сравнения
+        $passwordHash = md5($password);
+
+        // Генерация токена для аудефикации
+        try {
+            $authToken = bin2hex(random_bytes(self::LENGTH_AUTH_TOKEN));
+        } catch (\Exception $e) {
+            error_log($e);                          // логируем ошибку
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Произошла ошибка при создании токена аутентификации',
+            ]);
+        }
 
 
+        // Создание нового объекта (сущности) пользователя и заполненине всех его полей
         $user = new User();
-        $user->setUsername($request->get('username'));
-        $user->setPassword_hash(md5($request->get('password')));;
-        $user->setName($request->get('name'));
-        $user->setSurname($request->get('surname'));
-        $user->setAuth_token(bin2hex(random_bytes(32)));
+        $user->setUsername($username);
+        $user->setPasswordHash($passwordHash);;
+        $user->setName($name);
+        $user->setSurname($surname);
+        $user->setAuthToken($authToken);
 
+        // Отправка заполненного пользователя
         $entityManager->persist($user);
         $entityManager->flush();
-
 
         return $this->json(['user_id' => $user->getId()]);
     }
@@ -55,22 +150,44 @@ class UserController extends AbstractController
     #[Route('/user/login', name: 'user_login')]
     public function login(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // TODO валидация данных
+        $authService = new AuthService($entityManager);
+        $username = $request->get('username');
+        $password = $request->get('password');
 
-        $userId = new User();
-        // TODO добавить получение информации
-
-
-        // TODO добавить сравнение md5 введённого пароля и пароля из базы данных
-/*      if(md5($password) === $password_user)
-        {
-
-            //echo "<br> Correct password ";
+        // Валидация имени пользователя
+        if (empty($username) || mb_strlen($username) < self::MIN_LENGTH_USERNAME || mb_strlen($username) > self::MAX_LENGTH_USERNAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Не верно заполнено поле с логином',
+            ]);
         }
-        else {
 
-            //echo "<br> Incorrect password ";
-        }*/
+        // Валидация пароля
+        if (empty($password) || mb_strlen($password) < self::MIN_LENGTH_PASSWORD || mb_strlen($password) > self::MAX_LENGTH_PASSWORD) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с паролем не должно быть пустым',
+            ]);
+        }
+
+        // Проверяем вход пользователя с помощью AuthService
+        if (!$authService->login($username, $password)) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Неверный логин или пароль',
+            ]);
+        }
+
+        // Если вход прошел успешно, получаем информацию о пользователе
+        $user = $authService->getUserInfoByAuthToken();
+
+        return $this->json([
+            'success' => true,
+            'data' => ['user' => $user],  // возвращаем информацию о пользователе
+        ]);
     }
 
     #[Route('/user/{id}/delete', name: 'user_delete')]
@@ -81,67 +198,105 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user');
     }
-
 }
 
 /*
-class UsersController extends AbstractController
-//{
-
-    public function createUser(Request $request, UserRepository $userRepository): Response
-    {
-        $data = json_decode($request->getContent(), true);
-
-        // Создаём новый класс для пользоватлея
-        $user = new User();
-
-        // Задаём данные пользователя
-        $user->setUsername($data['username']);
-        $user->setPassword_hash(password_hash($data['password'], PASSWORD_ARGON2I));;
-        $user->setName($data['name']);
-        $user->setSurname($data['surname']);
-        $user->setAuth_token(bin2hex(random_bytes(64)));
-        $userRepository->save($user, true);
-
-        return new Response(sprintf('User %s successfully created', $user->getEmail()));
-    }
-*/
-/*    public function updateUser(Request $request, UserRepository $userRepository, int $id): Response
-    {
-        $user = $userRepository->find($id);
-        if (!$user) {
-            return new Response(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        if (empty($username)) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Не заполнено поле с логином',
+            ]);
         }
 
-        // Я пока своё не придумал, а принцип работы сгенерированного кода - не понял =(
-*/
-
-/*      // ---  Made by ChatGPT
-        // Получаем данные пользователя из тела запроса
-        $userDTO = UserDTO::createFromJson($request->getContent());
-
-        // Обновляем данные пользователя
-        $user->setUsername($userDTO->username);
-        $user->setEmail($userDTO->email);
-*/
-/*        // Сохраняем изменения в базе данных
-        $userRepository->save($user, true);
-
-        // Возвращаем ответ в виде JSON
-        return new Response(['message' => 'User updated successfully'], Response::HTTP_OK);
-
-    }
-*/
-/*    public function deleteUser(int $id, UserRepository $userRepository): Response
-    {
-        $user = $userRepository->find($id);
-
-        if (!$user) {
-            return $this->json(['error' => sprintf('User with id %d not found', $id)], Response::HTTP_NOT_FOUND);
+        if (mb_strlen($username) < self::MIN_LENGTH_USERNAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с логином должно быть не менее ' . self::MIN_LENGTH_USERNAME . ' символов',
+            ]);
         }
 
-        $userRepository->remove($user, true);
+        if (mb_strlen($username) > self::MAX_LENGTH_USERNAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с логином должно быть не более ' . self::MAX_LENGTH_USERNAME . ' символов',
+            ]);
+        }
 
-        return $this->json(['message' => 'User deleted successfully'], Response::HTTP_OK);
-    }
-}*/
+
+        if (empty($password)) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с паролем не должно быть пустым',
+            ]);
+        }
+
+        if (mb_strlen($password) < self::MIN_LENGTH_PASSWORD) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с паролем должно быть не менее ' . self::MIN_LENGTH_PASSWORD . ' символов',
+            ]);
+        }
+
+        if (mb_strlen($password) > self::MAX_LENGTH_PASSWORD) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с паролем должно быть не более ' . self::MAX_LENGTH_PASSWORD . ' символов',
+            ]);
+        }
+
+
+        if (empty($name)) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Не заполнено поле с именем',
+            ]);
+        }
+
+        if (mb_strlen($name) < self::MIN_LENGTH_NAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с именем должно быть не менее ' . self::MIN_LENGTH_NAME . ' символов',
+            ]);
+        }
+
+        if (mb_strlen($name) > self::MAX_LENGTH_NAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с именем должно быть не более ' . self::MAX_LENGTH_NAME . ' символов',
+            ]);
+        }
+
+
+        if (empty($surname)) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Не заполнено поле с фамилией',
+            ]);
+        }
+
+        if (mb_strlen($surname) < self::MIN_LENGTH_SURNAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с фамилией должно быть не менее ' . self::MIN_LENGTH_SURNAME . ' символов',
+            ]);
+        }
+
+        if (mb_strlen($surname) > self::MAX_LENGTH_SURNAME) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => 'Поле с фамилией должно быть не более ' . self::MAX_LENGTH_SURNAME . ' символов',
+            ]);
+        }
+ */

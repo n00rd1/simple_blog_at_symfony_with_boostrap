@@ -18,16 +18,16 @@ class User
     private ?string $username = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $password_hash = null;
+    private ?string $passwordHash = null;
 
-    #[ORM\Column(type:'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type:'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $surname = null;
 
-    #[ORM\Column(type:'string', length: 255)]
-    private ?string $auth_token = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $authToken = null;
 
     public function getId(): ?int
     {
@@ -67,25 +67,25 @@ class User
         return $this;
     }
 
-    public function getPassword_hash(): ?string
+    public function getPasswordHash(): ?string
     {
-        return $this->password_hash;
+        return $this->passwordHash;
     }
 
-    public function setPassword_hash(string $password_hash): self
+    public function setPasswordHash(string $passwordHash): self
     {
-        $this->password_hash = $password_hash;
+        $this->passwordHash = $passwordHash;
         return $this;
     }
 
-    public function getAuth_token(): ?string
+    public function getAuthToken(): ?string
     {
-        return $this->auth_token;
+        return $this->authToken;
     }
 
-    public function setAuth_token(string $auth_token): self
+    public function setAuthToken(string $authToken): self
     {
-        $this->auth_token = $auth_token;
+        $this->authToken = $authToken;
         return $this;
     }
 }

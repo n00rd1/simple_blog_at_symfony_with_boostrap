@@ -25,10 +25,10 @@ $(document).ready(function () {
             'method': 'POST',
             'dataType': 'json',
             'data': {
-                'username': $('#createUserModal #userUsernameInput').val(),
-                'password': $('#createUserModal #userPasswordInput').val(),
-                'name': $('#createUserModal #userNameInput').val(),
-                'surname': $('#createUserModal #userSurnameInput').val()
+                'username': $('#createUserModal #createUserUsernameInput').val(),
+                'password': $('#createUserModal #createUserPasswordInput').val(),
+                'name': $('#createUserModal #createUserNameInput').val(),
+                'surname': $('#createUserModal #createUserSurnameInput').val()
             },
             success: function (response, status) {
                 alert("Пользователь успешно зарегистрирован!");
@@ -43,12 +43,16 @@ $(document).ready(function () {
             'method': 'POST',
             'dataType': 'json',
             'data': {
-                'username': $('#loginUserModal #userUsernameInput').val(),
-                'password': $('#loginUserModal #userPasswordInput').val()
+                'username': $('#loginUserModal #loginUserUsernameInput').val(),
+                'password': $('#loginUserModal #loginUserPasswordInput').val()
             },
             success: function (response, status) {
-                alert("Авторизация успешна!");
-                location.reload();
+                if (response.success === false) {
+                    alert(response.error);
+                } else {
+                    alert("Авторизация успешна!");
+                    location.reload();
+                }
             }
         });
     });

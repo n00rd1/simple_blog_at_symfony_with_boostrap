@@ -17,25 +17,27 @@
         table td { border: 1px solid black; padding: 4px 8px; }
     </style>
 
+    <!-- TODO В перспективе нужно будеть убрать поля с паролем и токеном аудификации -->
+
     <div class="example-wrapper">
         <h1>Список пользователей!</h1>
         <table>
             <tr>
                 <td>Уникальный идефенкциальный номер</td>
                 <td>Имя пользователя</td>
-                <td>Хэш пароля</td>
                 <td>Имя пользователя</td>
                 <td>Второе имя пользователя</td>
+                <td>Хэш пароля</td>
                 <td>Логин для авторизации</td>
             </tr>
             {% for user in users %}
                 <tr>
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
-                    <td>{{ user.password_hash }}</td>
                     <td>{{ user.name }}</td>
                     <td>{{ user.surname }}</td>
-                    <td>{{ user.auth_token }}</td>
+                    <td>{{ user.passwordHash }}</td>
+                    <td>{{ user.authToken }}</td>
                 </tr>
             {% endfor %}
         </table>

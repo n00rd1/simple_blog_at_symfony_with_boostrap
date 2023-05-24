@@ -54,28 +54,30 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $email
+     * @param string $username
      *
      * @return User|null
      */
-    public function findByEmail(string $email): ?User
+    public function findByUsername(string $username): ?User
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.email = :email')
-            ->setParameter('email', $email)
+            ->andWhere('u.username = :username')
+            ->setParameter('username', $username)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
     /**
-     * @return User[]
+     * @param string $authToken
+     *
+     * @return User|null
      */
-    public function findAllActiveUsers(): array
+    public function findByAuthToken(string $authToken): ?User
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.is_active = true')
-            ->orderBy('u.id', 'ASC')
+            ->andWhere('u.authToken = :authToken')
+            ->setParameter('authToken', $authToken)
             ->getQuery()
-            ->getResult();
+            ->getOneOrNullResult();
     }
 }
