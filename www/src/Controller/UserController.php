@@ -190,6 +190,18 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/user/logout', name: 'user_logout')]
+    public function logout(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $authService = new AuthService($entityManager);
+        $authService->logout();
+
+        return $this->json([
+            'success' => true,
+            'data' => ['Выход из аккаунта завершён успешно']
+        ]);
+    }
+
     #[Route('/user/{id}/delete', name: 'user_delete')]
     public function delete(User $user, EntityManagerInterface $entityManager): Response
     {
@@ -199,104 +211,3 @@ class UserController extends AbstractController
         return $this->redirectToRoute('app_user');
     }
 }
-
-/*
-        if (empty($username)) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Не заполнено поле с логином',
-            ]);
-        }
-
-        if (mb_strlen($username) < self::MIN_LENGTH_USERNAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с логином должно быть не менее ' . self::MIN_LENGTH_USERNAME . ' символов',
-            ]);
-        }
-
-        if (mb_strlen($username) > self::MAX_LENGTH_USERNAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с логином должно быть не более ' . self::MAX_LENGTH_USERNAME . ' символов',
-            ]);
-        }
-
-
-        if (empty($password)) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с паролем не должно быть пустым',
-            ]);
-        }
-
-        if (mb_strlen($password) < self::MIN_LENGTH_PASSWORD) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с паролем должно быть не менее ' . self::MIN_LENGTH_PASSWORD . ' символов',
-            ]);
-        }
-
-        if (mb_strlen($password) > self::MAX_LENGTH_PASSWORD) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с паролем должно быть не более ' . self::MAX_LENGTH_PASSWORD . ' символов',
-            ]);
-        }
-
-
-        if (empty($name)) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Не заполнено поле с именем',
-            ]);
-        }
-
-        if (mb_strlen($name) < self::MIN_LENGTH_NAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с именем должно быть не менее ' . self::MIN_LENGTH_NAME . ' символов',
-            ]);
-        }
-
-        if (mb_strlen($name) > self::MAX_LENGTH_NAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с именем должно быть не более ' . self::MAX_LENGTH_NAME . ' символов',
-            ]);
-        }
-
-
-        if (empty($surname)) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Не заполнено поле с фамилией',
-            ]);
-        }
-
-        if (mb_strlen($surname) < self::MIN_LENGTH_SURNAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с фамилией должно быть не менее ' . self::MIN_LENGTH_SURNAME . ' символов',
-            ]);
-        }
-
-        if (mb_strlen($surname) > self::MAX_LENGTH_SURNAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => 'Поле с фамилией должно быть не более ' . self::MAX_LENGTH_SURNAME . ' символов',
-            ]);
-        }
- */

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\AuthService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
@@ -26,8 +27,6 @@ class ProductController extends AbstractController
     #[Route('/product/add', name: 'product_add')]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // TODO валидация входных данных
-
         $product = new Product();
         $product->setName($request->get('name'));
         $product->setPrice($request->get('price'));

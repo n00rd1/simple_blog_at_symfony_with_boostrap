@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
+use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
 
 // Для работы с HTTP кодом
@@ -21,19 +22,20 @@ class ArticleController extends AbstractController
     #[Route('/article', name: 'app_article')]
     public function index(EntityManagerInterface $entityManager): Response
     {
+        $authService = new AuthService($entityManager);
+        $user = $authService->getCurrentUser();
         $articles = $entityManager->getRepository(Article::class)->findAll();
 
         return $this->render('article/article_list.html.twig', [
             'controller_name' => 'ArticleController',
             'articles' => $articles,
+            'user' => $user,
         ]);
     }
 
     #[Route('/article/add', name: 'article_add')]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // TODO валидация входных данных
-
 
 
         $article = new Article();
@@ -44,11 +46,6 @@ class ArticleController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['article_id' => $article->getId()]);
-
-/*        return $this->render('article/article_list.html.twig', [
-           'controller_name' => 'ArticleController',
-           'test_string' =>  'ARTICLE ADD',
-        ]);*/
     }
 
     #[Route('/article/{id}/delete', name: 'article_delete')]

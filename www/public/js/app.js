@@ -1,5 +1,7 @@
 $(document).ready(function () {
-    // Пример написания кода на JS
+    /**
+     * Пример написания кода по добавлению информации
+     */
     $('#addProductSendButton').click(function () {
         $.ajax('/product/add', {
             'method': 'POST',
@@ -15,11 +17,14 @@ $(document).ready(function () {
             }
         });
     });
-    $('#btn2').click(function () {
-        alert("hello 2");
-    });
 
-    // Для работы с регистрацией
+    /**
+     * Для работы с регистрацией
+     * createUserUsernameInput  - Создание имени пользователя
+     * createUserPasswordInput  - Создание пароля
+     * createUserNameInput      - Создание имени
+     * createUserSurnameInput   - Создание фамилии
+     */
     $('#createUserSendButton').click(function () {
         $.ajax('/user/create', {
             'method': 'POST',
@@ -37,7 +42,11 @@ $(document).ready(function () {
         });
     });
 
-    // Для работы с авторизацией
+    /**
+     * Для работы с авторизацией
+     * loginUserUsernameInput - поле для указания имени пользователя
+     * loginUserPasswordInput - поле для указания пароля
+     */
     $('#loginUserSendButton').click(function () {
         $.ajax('/user/login', {
             'method': 'POST',
@@ -57,18 +66,41 @@ $(document).ready(function () {
         });
     });
 
-    // Для создания блога
+    /**
+     * Для создания блога
+     *  articleAuthorIdInput - поле для отображения пользовательского ника
+     *  articleTextInput - поле для указания текста блога
+     */
     $('#addArticleSendButton').click(function () {
         $.ajax('/article/add', {
             'method': 'POST',
             'dataType': 'json',
             'data': {
-                'author_id': $('#createArticleModal #articleAuthoridInput').val(),
+                'author_id': $('#createArticleModal #articleAuthorIdInput').val(),
                 'text': $('#createArticleModal #articleTextInput').val(),
             },
             success: function (response, status) {
                 alert("Блог успешно опубликован>!");
                 location.reload();
+            }
+        });
+    });
+
+    /**
+     * Для выхода из учётной записи
+     */
+    $('#logoutUserButton').click(function () {
+        $.ajax('/user/logout', {
+            'method': 'POST',
+            'dataType': 'json',
+            'data': {},
+            success: function (response, status) {
+                if (response.success === false) {
+                    alert(response.error);
+                } else {
+                    alert("Вы успешно вышли из системы!");
+                    location.reload();
+                }
             }
         });
     });

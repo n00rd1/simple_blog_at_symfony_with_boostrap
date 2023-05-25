@@ -28,16 +28,19 @@
                 <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                     {% block header %}{% endblock %}
                 </ul>
-
-                {% if app.user %}
-                    <p>Привет, {{ app.user.username }}!</p>
-                {% else %}
-                    <!-- Кнопки авторизации и регистрации -->
-                    <div class="col-md-3 text-end">
+                <!-- Кнопки (логина и выйти) или (авторизации и регистрации) -->
+                <div class="col-md-3 text-end">
+                    {% if user %}
+                        <div class="d-inline-block">
+                            <p class="d-inline-block mb-0 text-primary bg-light px-2 py-1 rounded">Привет, {{ user.username }}! </p>
+                            <button type="button" class="btn btn-outline-primary me-2" id="logoutUserButton" data-bs-toggle="modal" data-bs-target="#logoutUserModal">Выйти</button>
+                        </div>
+                    {% else %}
                         <button type="button" class="btn btn-outline-primary me-2" id="loginUserButton" data-bs-toggle="modal" data-bs-target="#loginUserModal">Войти</button>
                         <button type="button" class="btn btn-primary px-2 ms-1 me-5" id="createUserButton" data-bs-toggle="modal" data-bs-target="#createUserModal">Зарегистрироваться</button>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
+
 
                 <!-- Modal registration-->
                 <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">

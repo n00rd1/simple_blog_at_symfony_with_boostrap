@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class AuthService
 {
-    const AUTH_EXPIRE = 2419200; // 1 месяц
+    const AUTH_EXPIRE = 2419200; // Время жизни печеньки (1 месяц)
 
     protected EntityManagerInterface $entityManager;
 
-    /**
+    /** Конструтор
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -19,49 +19,43 @@ class AuthService
         $this->entityManager = $entityManager;
     }
 
-    // Установка аутентификационной куки
-    public function setAuthCookie(string $cookieValue) {
+    /** Установка аутентификационной куки
+     * @param string $cookieValue
+     * @return void
+     */
+    public function setAuthCookie(string $cookieValue)
+    {
         // Устанавливаем печеньку с именем "auth_cookie" и значением, переданным в функцию
         // Время жизни куки составляет 1 месяц (значение AUTH_EXPIRE)
         setcookie('auth_cookie', $cookieValue, time() + self::AUTH_EXPIRE, '/');
-
-
     }
 
-    // Генерация случайного значения для куки
-    private function generateAuthCookie() {
-        $randomValue = bin2hex(random_bytes(32));       // Генерируем случайное значение для куки
-        $this->setAuthCookie($randomValue);                 // Устанавливаем куку с использованием сгенерированного значения
-        return $randomValue;                                // Возвращаем случайное значение для дальнейшего использования
-    }
-
-    // Проверка аутентификационной куки
-    private function verifyAuthCookie() {
-        if (isset($_COOKIE['auth_cookie'])) {
-            $authCookie = $_COOKIE['auth_cookie'];
-
-            // Ищем пользователя по аутентификационному токену
-            $user = $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
-            return $user;
-        }
-        return null;                                        // Если куки нет, возвращаем null
-    }
-
-    // Функционал входа в систему
-    public function login(string $username, string $password): bool {
+    /** Вход в систему и авторизация в личном кабинете
+     * @param string $username
+     * @param string $password
+     * @return bool
+     * @throws \Exception
+     */
+    public function login(string $username, string $password): bool
+    {
         // Ищем пользователя по имени пользователя
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
         if (!$user) {
-            return false;                                   // Если пользователь не найден, возвращаем false
+            // Если пользователь не найден, возвращаем false
+            return false;
         }
 
         // Проверяем, совпадает ли предоставленный пароль с хешем пароля пользователя
         if ($user->getPasswordHash() !== md5($password)) {
-            return false;                                   // Если пароли не совпадают, возвращаем false
+            // Если пароли не совпадают, возвращаем false
+            return false;
         }
 
-        $authCookie = $this->generateAuthCookie();          // Генерируем новую аутентификационную печеньку
-        $user->setAuthToken($authCookie);                   // Сохраняем аутентификационную куку в базе данных
+        // Генерируем новую аутентификационную печеньку
+        $authCookie = $this->generateAuthCookie();
+
+        // Сохраняем аутентификационную куку в базе данных
+        $user->setAuthToken($authCookie);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -69,13 +63,21 @@ class AuthService
         return true;
     }
 
-    // Функционал выхода из системы
-    public function logout(): void {
-        setcookie('auth_cookie', '', time() - 1, '/');      // Удаляем аутентификационную печеньку
+    /** Выход из системы
+     * @return void
+     */
+    public function logout(): void
+    {
+        // Удаляем аутентификационную печеньку
+        setcookie('auth_cookie', '', time() - 1, '/');
     }
 
-    // Получение информации о пользователе по аутентификационному токену
-    public function getUserInfoByAuthToken() {
+    /** Получение информации о пользователе по аутентификационному токену
+     *
+     * @return User|object|null
+     */
+    public function getUserInfoByAuthToken()
+    {
         // Проверяем, установлена ли аутентификационная куки
         if (isset($_COOKIE['auth_cookie'])) {
             $authCookie = $_COOKIE['auth_cookie'];
@@ -84,13 +86,62 @@ class AuthService
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
 
             if (!$user) {
-                return null;                                // Если аутентификационный токен не найден, возвращаем null
+                // Если аутентификационный токен не найден, возвращаем null
+                return null;
             }
 
-            return $user;                                   // Возвращаем информацию о пользователе
-
+            // Возвращаем информацию о пользователе
+            return $user;
         }
 
-        return null;                                        // Если аутентификационная куки не установлена, возвращаем null
+        // Если аутентификационная куки не установлена, возвращаем null
+        return null;
+    }
+
+    /** Получить текущего авторизованного пользователя
+     *
+     * @return User|null
+     */
+    public function getCurrentUser(): ?User
+    {
+        if (empty($_COOKIE['auth_cookie'])) {
+            return null;
+        }
+        return $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $_COOKIE['auth_cookie']]);
+    }
+
+
+    /** Генерация случайного значения для куки
+     * @return string
+     * @throws \Exception
+     */
+    private function generateAuthCookie()
+    {
+        // Генерируем случайное значение для куки
+        $randomValue = bin2hex(random_bytes(32));
+
+        // Устанавливаем куку с использованием сгенерированного значения
+        $this->setAuthCookie($randomValue);
+
+        // Возвращаем случайное значение для дальнейшего использования
+        return $randomValue;
+    }
+
+
+    /** Проверка аутентификационной куки
+     * @return User|object|null
+     */
+    private function verifyAuthCookie()
+    {
+        if (isset($_COOKIE['auth_cookie'])) {
+            $authCookie = $_COOKIE['auth_cookie'];
+
+            // Ищем пользователя по аутентификационному токену
+            $user = $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
+            return $user;
+        }
+
+        // Если куки нет, возвращаем null
+        return null;
     }
 }
