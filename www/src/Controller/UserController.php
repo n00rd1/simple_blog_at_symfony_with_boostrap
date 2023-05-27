@@ -35,8 +35,10 @@ class UserController extends AbstractController
     const MIN_LENGTH_SURNAME = 4;
     const MAX_LENGTH_SURNAME = 64;
 
-    private function validateField($field, $minLength, $maxLength, $fieldName) {
-        if (empty($field)) {                            // Проверка на пустоту поля
+    private function validateField($field, $minLength, $maxLength, $fieldName)
+    {
+        // Проверка на пустоту поля
+        if (empty($field)) {
             return [
                 'success' => false,
                 'data' => [],
@@ -44,7 +46,8 @@ class UserController extends AbstractController
             ];
         }
 
-        if (mb_strlen($field) < $minLength) {           // Проверка минимальной длины
+        // Проверка минимальной длины
+        if (mb_strlen($field) < $minLength) {
             return [
                 'success' => false,
                 'data' => [],
@@ -52,7 +55,8 @@ class UserController extends AbstractController
             ];
         }
 
-        if (mb_strlen($field) > $maxLength) {           // Проверка максимальной длины
+        // Проверка максимальной длины
+        if (mb_strlen($field) > $maxLength) {
             return [
                 'success' => false,
                 'data' => [],
@@ -60,7 +64,8 @@ class UserController extends AbstractController
             ];
         }
 
-        return null;                                    // Если все проверки пройдены, возвращаем null
+        // Если все проверки пройдены, возвращаем null
+        return null;
     }
 
     #[Route('/user', name: 'app_user')]
