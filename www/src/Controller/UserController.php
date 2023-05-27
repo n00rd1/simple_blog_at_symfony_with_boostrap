@@ -2,23 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
 
 // Для работы с HTTP кодом
-use phpDocumentor\Reflection\DocBlock\Tags\Uses;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-// Для хеширования пароля
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class UserController extends AbstractController
 {
@@ -140,7 +133,7 @@ class UserController extends AbstractController
         // Создание нового объекта (сущности) пользователя и заполненине всех его полей
         $user = new User();
         $user->setUsername($username);
-        $user->setPasswordHash($passwordHash);;
+        $user->setPasswordHash($passwordHash);
         $user->setName($name);
         $user->setSurname($surname);
         $user->setAuthToken($authToken);

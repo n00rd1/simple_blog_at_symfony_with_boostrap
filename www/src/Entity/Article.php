@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\ArticleRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ArticleRepository;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class), ORM\Table(name: "articles")]
 class Article

@@ -72,7 +72,6 @@ class ArticleController extends AbstractController
         $article->setAuthor($user);
         $article->setText($request->get('text'));
         $article->setCreatedAt(new \DateTime());
-        //var_dump($article);
 
         $entityManager->persist($article);
         $entityManager->flush();
