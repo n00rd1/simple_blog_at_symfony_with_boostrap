@@ -19,6 +19,7 @@ RUN adduser --disabled-password --gecos "" --uid ${USER_UID} user && \
         php8.1-pgsql \
         php-memcached \
         php-curl \
+        php8.1-xdebug \
         libzip-dev \
         zip \
         nodejs \
