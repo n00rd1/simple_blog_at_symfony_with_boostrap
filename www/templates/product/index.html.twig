@@ -10,13 +10,6 @@
 {% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-        table { border: 1px solid black; border-collapse: collapse; }
-        table td { border: 1px solid black; padding: 4px 8px; }
-    </style>
-
     <div class="example-wrapper">
         <h1>Товарный каталог!</h1>
         <table>
@@ -44,7 +37,8 @@
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel"
+             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -54,7 +48,8 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="productNameInput" class="form-label">Наименование товара</label>
-                            <input type="text" class="form-control" id="productNameInput" placeholder="Например: джинсы летние">
+                            <input type="text" class="form-control" id="productNameInput"
+                                   placeholder="Например: джинсы летние">
                         </div>
                         <div class="mb-3">
                             <label for="productPriceInput" class="form-label">Стоимость товара</label>

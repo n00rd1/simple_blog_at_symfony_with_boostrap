@@ -9,20 +9,18 @@
 {% endblock %}
 
 {% block body %}
-    <style>
-        .article-list { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .article-list code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
-
     <!-- Button for creating new blog -->
     <div class="d-flex justify-content-center align-items-center">
         {% if user %}
-        <button type="button" class="btn btn-outline-primary btn-lg w-25" id="addArticleButton" data-bs-toggle="modal" data-bs-target="#addArticleModal">Создать свой блог</button>
+            <button type="button" class="btn btn-outline-primary btn-lg w-25" id="addArticleButton"
+                    data-bs-toggle="modal" data-bs-target="#addArticleModal">Создать свой блог
+            </button>
         {% endif %}
     </div>
 
     <!-- Modal creating new blog -->
-    <div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addArticleModal" tabindex="-1" aria-labelledby="addArticleModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -51,7 +49,9 @@
                         <ul class="list-inline">
                             <h4>Опубликовано:</h4>
                             <i>{{ article.createdAt.format("d.m.Y H:i") }}</i>
-                            <a class="btn btn-outline-secondary mt-2" href="{{ path('app_comments', {'articleId': article.id}) }}" role="button">Комментировать</a>
+                            <a class="btn btn-outline-secondary mt-2"
+                               href="{{ path('app_comments', {'articleId': article.id}) }}"
+                               role="button">Комментировать</a>
                         </ul>
                     </div>
                     <div class="col-xs-12 col-sm-7 col-md-7 col-lg-8">

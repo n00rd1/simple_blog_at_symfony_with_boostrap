@@ -47,8 +47,7 @@ class ArticleController extends AbstractController
 
         $text = $request->get('text');
 
-        if (empty($text) || mb_strlen($text) < 2)
-        {
+        if (empty($text) || mb_strlen($text) < 2) {
             return $this->json([
                 'success' => false,
                 'data' => [],
@@ -56,8 +55,7 @@ class ArticleController extends AbstractController
             ]);
         }
 
-        if (mb_strlen($text) > self::LENGTH_TEXT_STRING)
-        {
+        if (mb_strlen($text) > self::LENGTH_TEXT_STRING) {
             $excessLength = mb_strlen($text) - self::LENGTH_TEXT_STRING;
             $maxLenStr = self::LENGTH_TEXT_STRING;
 

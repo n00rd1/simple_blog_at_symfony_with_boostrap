@@ -99,10 +99,12 @@ $(document).ready(function () {
      *  articleTextInput - поле для указания текста блога
      */
     $('#addCommentSendButton').click(function () {
+
         $.ajax('/comment/add', {
             'method': 'POST',
             'dataType': 'json',
             'data': {
+                'article_id': $('#articleId').data('id'),
                 'text': $('#addCommentModal #commentTextInput').val(),
             },
             success: function (response, status) {

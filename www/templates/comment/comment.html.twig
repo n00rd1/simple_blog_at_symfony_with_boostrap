@@ -34,25 +34,29 @@
                     </article>
 
                     <!-- Форма добавления комментария -->
-<!--                <div class="coment-bottom bg-white p-2 px-4">
-                       <div class="d-flex flex-row add-comment-sn mt-4 mb-4">
-                           <input type="text" class="form-control mr-3" id="commentTextInput" placeholder="Добавить комментарий">
-                           <button type="button" class="btn btn-primary" id="addCommentSendButton">Оставить комментарий</button>   -->
-                        <div class="d-flex justify-content-center align-items-center">
-                                {% if user %}
-                                    <button type="button" class="btn btn-outline-primary btn-lg" id="addCommentButton" data-bs-toggle="modal" data-bs-target="#addCommentModal">Оставить комментарий</button>
-                                {% endif %}
-                            </div>
-<!--                        </div>
-                    </div>  -->
+                    <!--                <div class="coment-bottom bg-white p-2 px-4">
+                                           <div class="d-flex flex-row add-comment-sn mt-4 mb-4">
+                                               <input type="text" class="form-control mr-3" id="commentTextInput" placeholder="Добавить комментарий">
+                                               <button type="button" class="btn btn-primary" id="addCommentSendButton">Оставить комментарий</button>   -->
+                    <div class="d-flex justify-content-center align-items-center">
+                        {% if user %}
+                            <button type="button" class="btn btn-outline-primary btn-lg" id="addCommentButton"
+                                    data-bs-toggle="modal" data-bs-target="#addCommentModal">Оставить комментарий
+                            </button>
+                        {% endif %}
+                    </div>
+                    <!--                        </div>
+                                        </div>  -->
 
                     <!-- Modal creating new comment -->
-                    <div class="modal fade" id="addCommentModal" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="addCommentModal" tabindex="-1" aria-labelledby="addCommentModalLabel"
+                         aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="addCommentModalLabel">Оставить комментарий</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3">
@@ -61,14 +65,18 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                    <button type="button" class="btn btn-primary" id="addCommentSendButton">Опубликовать</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="addCommentSendButton">
+                                        Опубликовать
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h2 class="justify-content-center comments d-flex align-items-center ml-5">Всего коментариев {{ commentCount }}</h2>
+                    <h2 class="justify-content-center comments d-flex align-items-center ml-5">Всего
+                        коментариев {{ commentCount }}</h2>
 
                     <!-- Комментарии -->
                     <article class="post vt-post">
@@ -76,7 +84,8 @@
                             <div class="card p-3">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="user d-flex flex-row align-items-center">
-                                        <span><small class="font-weight-bold text-primary">{{ comment.author.username }}</small></span>
+                                        <span><small
+                                                    class="font-weight-bold text-primary">{{ comment.author.username }}</small></span>
                                     </div>
                                     <small>{{ comment.createdAt.format("d.m.Y H:i") }}</small>
                                 </div>
@@ -92,5 +101,6 @@
             {% endif %}
         </div>
     </div>
+    <div id="articleId" data-id="{{ first_article.id }}"></div>
 {% endblock %}
 

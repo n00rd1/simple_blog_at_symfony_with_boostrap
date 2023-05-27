@@ -9,25 +9,25 @@
 {% endblock %}
 
 {% block body %}
-        <div class="user-table-container">
-            <table class="table table-striped">
-                <thead>
+    <div class="user-table-container">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Name</th>
+                <th scope="col">Surname</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
                 <tr>
-                    <th scope="col">Username</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Surname</th>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.surname }}</td>
                 </tr>
-                </thead>
-                <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.surname }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

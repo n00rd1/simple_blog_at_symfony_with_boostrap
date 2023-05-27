@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class CommentController extends AbstractController
 {
     const LENGTH_COMMENT_STRING = 512;
+
     #[Route('/comments/{articleId}', name: 'app_comments')]
     public function showComments($articleId, EntityManagerInterface $entityManager): Response
     {
@@ -25,14 +26,14 @@ class CommentController extends AbstractController
         $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
-        // Получение исходных данных коментария
+        // Получение исходных данных комментария
         $articleRepository = $entityManager->getRepository(Article::class);
-        $firstArticle = $articleRepository->findOneBy([], ['createdAt' => 'ASC']);
+        $firstArticle = $articleRepository->find($articleId);
 
-        // Получения всех комментариев к записи
-        $comments = $entityManager->getRepository(Comment::class)->findBy(['article' => $articleId]);
+        // Получение всех комментариев к записи
+        $comments = $entityManager->getRepository(Comment::class)->findBy(['article' => $firstArticle]);
 
-        // Счётчик для комментариев
+        // Счетчик для комментариев
         $commentCount = count($comments);
 
         return $this->render('comment/comment.html.twig', [
@@ -42,7 +43,6 @@ class CommentController extends AbstractController
             'commentCount' => $commentCount,
         ]);
     }
-
 
     #[Route('/comment/add', name: 'comment_add')]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
@@ -61,8 +61,7 @@ class CommentController extends AbstractController
 
         $text = $request->get('text');
 
-        if (empty($text) || mb_strlen($text) < 2)
-        {
+        if (empty($text) || mb_strlen($text) < 2) {
             return $this->json([
                 'success' => false,
                 'data' => [],
@@ -70,8 +69,7 @@ class CommentController extends AbstractController
             ]);
         }
 
-        if (mb_strlen($text) > self::LENGTH_COMMENT_STRING)
-        {
+        if (mb_strlen($text) > self::LENGTH_COMMENT_STRING) {
             $excessLength = mb_strlen($text) - self::LENGTH_COMMENT_STRING;
             $maxLenStr = self::LENGTH_COMMENT_STRING;
 
@@ -83,10 +81,8 @@ class CommentController extends AbstractController
         }
 
         // Получаю объект Article
-        $articleId = $entityManager->getRepository(Article::class);
-        $article = $articleId->findOneBy([], ['createdAt' => 'ASC']);
-        //$articleId = $request->get('article_id');
-        //$article = $entityManager->getRepository(Article::class)->find($articleId);
+        $articles = $entityManager->getRepository(Article::class);
+        $article = $articles->find($request->get('article_id'));
 
         if (!$article) {
             return $this->json([

@@ -1,115 +1,134 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/css/main.css" rel="stylesheet">
-        <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="/jquery/jquery-3.7.0.min.js"></script>
-        <script src="/js/app.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/jquery/jquery-3.7.0.min.js"></script>
+    <script src="/js/app.js"></script>
 
-        <div class="header_menu">
-            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-                <div class="col-md-3 mb-2 mb-md-0">
-                    <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-                        <svg class="bi" width="40" height="32" role="img" aria-label="Blogify"><use xlink:href="#Blogify"></use></svg>
-                    </a>
-                </div>
+    <div class="header_menu">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <div class="col-md-3 mb-2 mb-md-0">
+                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+                    <svg class="bi" width="40" height="32" role="img" aria-label="Blogify">
+                        <use xlink:href="#Blogify"></use>
+                    </svg>
+                </a>
+            </div>
 
-                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                    {% block header %}{% endblock %}
-                </ul>
-                <!-- Кнопки (логина и выйти) или (авторизации и регистрации) -->
-                <div class="col-md-3 text-end">
-                    {% if user %}
-                        <div class="d-inline-block">
-                            <p class="d-inline-block mb-0 text-primary bg-light px-2 py-1 rounded">Привет, {{ user.username }}! </p>
-                            <button type="button" class="btn btn-outline-primary me-2" id="logoutUserButton" data-bs-toggle="modal" data-bs-target="#logoutUserModal">Выйти</button>
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                {% block header %}{% endblock %}
+            </ul>
+            <!-- Кнопки (логина и выйти) или (авторизации и регистрации) -->
+            <div class="col-md-3 text-end">
+                {% if user %}
+                    <div class="d-inline-block">
+                        <p class="d-inline-block mb-0 text-primary bg-light px-2 py-1 rounded">
+                            Привет, {{ user.username }}! </p>
+                        <button type="button" class="btn btn-outline-primary me-2" id="logoutUserButton"
+                                data-bs-toggle="modal" data-bs-target="#logoutUserModal">Выйти
+                        </button>
+                    </div>
+                {% else %}
+                    <button type="button" class="btn btn-outline-primary me-2" id="loginUserButton"
+                            data-bs-toggle="modal" data-bs-target="#loginUserModal">Войти
+                    </button>
+                    <button type="button" class="btn btn-primary px-2 ms-1 me-5" id="createUserButton"
+                            data-bs-toggle="modal" data-bs-target="#createUserModal">Зарегистрироваться
+                    </button>
+                {% endif %}
+            </div>
+
+
+            <!-- Modal registration-->
+            <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createUserModalLabel">Регистрация нового пользователя</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                    {% else %}
-                        <button type="button" class="btn btn-outline-primary me-2" id="loginUserButton" data-bs-toggle="modal" data-bs-target="#loginUserModal">Войти</button>
-                        <button type="button" class="btn btn-primary px-2 ms-1 me-5" id="createUserButton" data-bs-toggle="modal" data-bs-target="#createUserModal">Зарегистрироваться</button>
-                    {% endif %}
-                </div>
-
-
-                <!-- Modal registration-->
-                <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="createUserModalLabel">Регистрация нового пользователя</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-body">
+                            <div class="mb-3 form-group">
+                                <label for="createUserUsernameInput" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="createUserUsernameInput"
+                                       placeholder="Ivan555">
                             </div>
-                            <div class="modal-body">
-                                <div class="mb-3 form-group">
-                                    <label for="createUserUsernameInput" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="createUserUsernameInput" placeholder="Ivan555">
-                                </div>
-                                <div class="mb-3 form-group">
-                                    <label for="createUserPasswordInput" class="form-label">Password</label>
-                                    <!-- для закрытого типа стоит использовать password -->
-                                    <input type="text" class="form-control" id="createUserPasswordInput" placeholder="******">
-                                </div>
-                                <div class="mb-3 form-group">
-                                    <label for="createUserNameInput" class="form-label">Имя</label>
-                                    <input type="text" class="form-control" id="createUserNameInput" placeholder="Иван">
-                                </div>
-                                <div class="mb-3 form-group">
-                                    <label for="createUserSurnameInput" class="form-label">Фамилия</label>
-                                    <input type="text" class="form-control" id="createUserSurnameInput" placeholder="Петров">
-                                </div>
+                            <div class="mb-3 form-group">
+                                <label for="createUserPasswordInput" class="form-label">Password</label>
+                                <!-- для закрытого типа стоит использовать password -->
+                                <input type="text" class="form-control" id="createUserPasswordInput"
+                                       placeholder="******">
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Выйти</button>
-                                <button type="button" class="btn btn-primary" id="createUserSendButton">Загистрироваться</button>
+                            <div class="mb-3 form-group">
+                                <label for="createUserNameInput" class="form-label">Имя</label>
+                                <input type="text" class="form-control" id="createUserNameInput" placeholder="Иван">
                             </div>
+                            <div class="mb-3 form-group">
+                                <label for="createUserSurnameInput" class="form-label">Фамилия</label>
+                                <input type="text" class="form-control" id="createUserSurnameInput"
+                                       placeholder="Петров">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Выйти</button>
+                            <button type="button" class="btn btn-primary" id="createUserSendButton">Загистрироваться
+                            </button>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Modal authorization -->
-                <div class="modal fade" id="loginUserModal" tabindex="-1" aria-labelledby="loginUserModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="loginUserModalLabel">Войти в аккаунт</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <!-- Modal authorization -->
+            <div class="modal fade" id="loginUserModal" tabindex="-1" aria-labelledby="loginUserModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginUserModalLabel">Войти в аккаунт</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="loginUserUsernameInput" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="loginUserUsernameInput">
                             </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label for="loginUserUsernameInput" class="form-label">Username</label>
-                                    <input type="text" class="form-control" id="loginUserUsernameInput">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="loginUserPasswordInput" class="form-label">Password</label>
-                                    <input type="text" class="form-control" id="loginUserPasswordInput">
-                                </div>
+                            <div class="mb-3">
+                                <label for="loginUserPasswordInput" class="form-label">Password</label>
+                                <input type="text" class="form-control" id="loginUserPasswordInput">
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                <button type="button" class="btn btn-primary" id="loginUserSendButton">Войти</button>
-                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                            <button type="button" class="btn btn-primary" id="loginUserSendButton">Войти</button>
                         </div>
                     </div>
                 </div>
+            </div>
 
-            </header>
-        </div>
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+        </header>
+    </div>
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
 
-    <!-- Добавить смещение в самый низ страницы -->
-    <footer class="mt-5 py-2 my-3 border-top">
-        <p class="text-center text-body-secondary">© 2023 Blogify Company, Inc</p>
-        <ul class="nav justify-content-center">
-            <li class="nav-item"><a href="https://t.me/gold_shark" class="nav-link px-2 text-body-secondary">Telegram</a></li>
-            <li class="nav-item"><a href="mailto:mukhamedshin13@gmail.com" class="nav-link px-2 text-body-secondary">Gmail</a></li>
-            <li class="nav-item"><a href="https://github.com/n00rd1/simple_blog_at_symfony_with_boostrap" class="nav-link px-2 text-body-secondary">Github</a></li>
-        </ul>
-    </footer>
+<!-- Добавить смещение в самый низ страницы -->
+<footer class="mt-5 py-2 my-3 border-top">
+    <p class="text-center text-body-secondary">© 2023 Blogify Company, Inc</p>
+    <ul class="nav justify-content-center">
+        <li class="nav-item"><a href="https://t.me/gold_shark" class="nav-link px-2 text-body-secondary">Telegram</a>
+        </li>
+        <li class="nav-item"><a href="mailto:mukhamedshin13@gmail.com"
+                                class="nav-link px-2 text-body-secondary">Gmail</a></li>
+        <li class="nav-item"><a href="https://github.com/n00rd1/simple_blog_at_symfony_with_boostrap"
+                                class="nav-link px-2 text-body-secondary">Github</a></li>
+    </ul>
+</footer>
 </html>
