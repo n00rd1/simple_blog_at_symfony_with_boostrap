@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ArticleRepository;
-use App\Entity\User;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class), ORM\Table(name: "articles")]
@@ -15,16 +15,14 @@ class Article
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", onDelete: "RESTRICT", nullable: false)]
-//      Error with onUpdate
-//    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", onDelete: "RESTRICT", onUpdate: "CASCADE", nullable: false)]
-    private ?User $author = null;
+    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", nullable: false, onDelete: "RESTRICT")]
+    private ?User $author;
 
     #[ORM\Column(type: "text")]
     private ?string $text = null;
 
     #[ORM\Column(name: "created_at", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?\DateTime $createdAt = null;
+    private ?DateTime $createdAt = null;
 
     public function getId(): ?int
     {
@@ -36,9 +34,9 @@ class Article
         return $this->author;
     }
 
-    public function setAuthor(User $author): self
+    public function setAuthor(User $authorId): self
     {
-        $this->author = $author;
+        $this->author = $authorId;
         return $this;
     }
 
@@ -53,12 +51,12 @@ class Article
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): self
+    public function setCreatedAt(DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;

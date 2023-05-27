@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class AuthService
 {
@@ -23,7 +24,7 @@ class AuthService
      * @param string $cookieValue
      * @return void
      */
-    public function setAuthCookie(string $cookieValue)
+    public function setAuthCookie(string $cookieValue): void
     {
         // Устанавливаем печеньку с именем "auth_cookie" и значением, переданным в функцию
         // Время жизни куки составляет 1 месяц (значение AUTH_EXPIRE)
@@ -34,7 +35,7 @@ class AuthService
      * @param string $username
      * @param string $password
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function login(string $username, string $password): bool
     {
@@ -74,9 +75,9 @@ class AuthService
 
     /** Получение информации о пользователе по аутентификационному токену
      *
-     * @return User|object|null
+     * @return User|null
      */
-    public function getUserInfoByAuthToken()
+    public function getUserInfoByAuthToken(): ?User
     {
         // Проверяем, установлена ли аутентификационная куки
         if (isset($_COOKIE['auth_cookie'])) {
@@ -113,9 +114,9 @@ class AuthService
 
     /** Генерация случайного значения для куки
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
-    private function generateAuthCookie()
+    private function generateAuthCookie(): string
     {
         // Генерируем случайное значение для куки
         $randomValue = bin2hex(random_bytes(32));
@@ -129,16 +130,15 @@ class AuthService
 
 
     /** Проверка аутентификационной куки
-     * @return User|object|null
+     * @return User|null
      */
-    private function verifyAuthCookie()
+    protected function verifyAuthCookie(): ?User
     {
         if (isset($_COOKIE['auth_cookie'])) {
             $authCookie = $_COOKIE['auth_cookie'];
 
             // Ищем пользователя по аутентификационному токену
-            $user = $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
-            return $user;
+            return $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
         }
 
         // Если куки нет, возвращаем null

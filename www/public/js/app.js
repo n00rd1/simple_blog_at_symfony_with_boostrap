@@ -1,24 +1,5 @@
 $(document).ready(function () {
     /**
-     * Пример написания кода по добавлению информации
-     */
-    $('#addProductSendButton').click(function () {
-        $.ajax('/product/add', {
-            'method': 'POST',
-            'dataType': 'json',
-            'data': {
-                'name': $('#addProductModal #productNameInput').val(),
-                'price': $('#addProductModal #productPriceInput').val(),
-                'size': $('#addProductModal #productSizeInput').val()
-            },
-            success: function (response, status) {
-                alert("Товар успешно добален!");
-                location.reload();
-            }
-        });
-    });
-
-    /**
      * Для работы с регистрацией
      * createUserUsernameInput  - Создание имени пользователя
      * createUserPasswordInput  - Создание пароля
@@ -36,8 +17,12 @@ $(document).ready(function () {
                 'surname': $('#createUserModal #createUserSurnameInput').val()
             },
             success: function (response, status) {
-                alert("Пользователь успешно зарегистрирован!");
-                location.reload();
+                if (response.success === false) {
+                    alert(response.error);
+                } else {
+                    alert("Пользователь успешно зарегистрирован!");
+                    location.reload();
+                }
             }
         });
     });
@@ -53,7 +38,7 @@ $(document).ready(function () {
             'dataType': 'json',
             'data': {
                 'username': $('#loginUserModal #loginUserUsernameInput').val(),
-                'password': $('#loginUserModal #loginUserPasswordInput').val()
+                'password': $('#loginUserModal #loginUserPasswordInput').val(),
             },
             success: function (response, status) {
                 if (response.success === false) {
@@ -62,26 +47,6 @@ $(document).ready(function () {
                     alert("Авторизация успешна!");
                     location.reload();
                 }
-            }
-        });
-    });
-
-    /**
-     * Для создания блога
-     *  articleAuthorIdInput - поле для отображения пользовательского ника
-     *  articleTextInput - поле для указания текста блога
-     */
-    $('#addArticleSendButton').click(function () {
-        $.ajax('/article/add', {
-            'method': 'POST',
-            'dataType': 'json',
-            'data': {
-                'author_id': $('#createArticleModal #articleAuthorIdInput').val(),
-                'text': $('#createArticleModal #articleTextInput').val(),
-            },
-            success: function (response, status) {
-                alert("Блог успешно опубликован>!");
-                location.reload();
             }
         });
     });
@@ -104,4 +69,51 @@ $(document).ready(function () {
             }
         });
     });
+
+    /**
+     * Для создания блога
+     *  articleAuthorIdInput - поле для отображения пользовательского ника
+     *  articleTextInput - поле для указания текста блога
+     */
+    $('#addArticleSendButton').click(function () {
+        $.ajax('/article/add', {
+            'method': 'POST',
+            'dataType': 'json',
+            'data': {
+                'text': $('#addArticleModal #articleTextInput').val(),
+            },
+            success: function (response, status) {
+                if (response.success === false) {
+                    alert(response.error);
+                } else {
+                    alert("Блог успешно опубликован!");
+                    location.reload();
+                }
+            }
+        });
+    });
+
+    /**
+     * Пример написания кода по добавлению информации
+     */
+    $('#addProductSendButton').click(function () {
+        $.ajax('/product/add', {
+            'method': 'POST',
+            'dataType': 'json',
+            'data': {
+                'name': $('#addProductModal #productNameInput').val(),
+                'price': $('#addProductModal #productPriceInput').val(),
+                'size': $('#addProductModal #productSizeInput').val()
+            },
+            success: function (response, status) {
+                if (response.success === false) {
+                    alert(response.error);
+                } else {
+                    alert("Товар успешно добавлен в корзину!");
+                    location.reload();
+                }
+            }
+        });
+    });
+
 });

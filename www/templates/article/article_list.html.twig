@@ -4,9 +4,6 @@
 
 {% block header %}
     <li><a href="/article" class="nav-link px-2 link-secondary">Главная</a></li>
-    <li><a href="/user" class="nav-link px-2">Пользователи</a></li>
-    <li><a href="#" class="nav-link px-2">Мой профиль</a></li>
-    <li><a href="/product" class="nav-link px-2">test_page</a></li>
 {% endblock %}
 
 {% block body %}
@@ -29,14 +26,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addArticleModalLabel">Войти в аккаунт</h5>
+                    <h5 class="modal-title" id="addArticleModalLabel">Создать блог</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="articleAuthoridInput" class="form-label">User_id</label>
-                        <input type="text" class="form-control" id="articleAuthoridInput">
-                    </div>
                     <div class="mb-3">
                         <label for="articleTextInput" class="form-label">Текст блога:</label>
                         <input type="text" class="form-control" id="articleTextInput">
