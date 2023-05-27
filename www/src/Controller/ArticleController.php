@@ -16,7 +16,7 @@ class ArticleController extends AbstractController
 {
     const LENGTH_TEXT_STRING = 512;
 
-    #[Route('/article', name: 'app_article')]
+    #[Route('/', name: 'app_article')]
     public function index(EntityManagerInterface $entityManager): Response
     {
         $authService = new AuthService($entityManager);
