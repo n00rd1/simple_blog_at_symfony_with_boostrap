@@ -26,7 +26,7 @@ class Comment
     private ?string $comment = null;
 
     #[ORM\Column(name: "created_at", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?string $createdAt = null;
+    private ?DateTime $createdAt = null;
 
     public function getId(): ?int
     {
@@ -38,7 +38,7 @@ class Comment
         return $this->author;
     }
 
-    public function setAuthor(int $authorId): self
+    public function setAuthor(User $authorId): self
     {
         $this->author = $authorId;
         return $this;
@@ -49,7 +49,7 @@ class Comment
         return $this->article;
     }
 
-    public function setArticle(int $articleId): self
+    public function setArticle(Article $articleId): self
     {
         $this->article = $articleId;
         return $this;

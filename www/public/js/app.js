@@ -94,6 +94,29 @@ $(document).ready(function () {
     });
 
     /**
+     * Для создания блога
+     *  articleAuthorIdInput - поле для отображения пользовательского ника
+     *  articleTextInput - поле для указания текста блога
+     */
+    $('#addCommentSendButton').click(function () {
+        $.ajax('/comment/add', {
+            'method': 'POST',
+            'dataType': 'json',
+            'data': {
+                'text': $('#addCommentModal #commentTextInput').val(),
+            },
+            success: function (response, status) {
+                if (response.success === false) {
+                    alert(response.error);
+                } else {
+                    alert("Комментарий успешно опубликован!");
+                    location.reload();
+                }
+            }
+        });
+    });
+
+    /**
      * Пример написания кода по добавлению информации
      */
     $('#addProductSendButton').click(function () {

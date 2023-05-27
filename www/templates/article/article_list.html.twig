@@ -51,7 +51,7 @@
                         <ul class="list-inline">
                             <h4>Опубликовано:</h4>
                             <i>{{ article.createdAt.format("d.m.Y H:i") }}</i>
-                            <a class="btn btn-outline-secondary mt-2" href="#" role="button">Комментировать</a>
+                            <a class="btn btn-outline-secondary mt-2" href="{{ path('app_comments', {'articleId': article.id}) }}" role="button">Комментировать</a>
                         </ul>
                     </div>
                     <div class="col-xs-12 col-sm-7 col-md-7 col-lg-8">
