@@ -2,10 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentRepository;
-use App\Entity\User;
-use Doctrine\DBAL\Types\Types;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CommentRepository;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class), ORM\Table(name: "comments")]
 class Comment
@@ -16,66 +15,48 @@ class Comment
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", onDelete: "RESTRICT", nullable: false)]
-//      Error with onUpdate
-//    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", onDelete: "RESTRICT", onUpdate: "CASCADE", nullable: false)]
-    private ?int $author_ = null;
-
-    //  ---
-    //
-    // ЛИБО АЛЬТЕРНАТИВНЫЙ ВАРИАНТ
-    //  #[ORM\ManyToOne(targetEntity: User::class)]
-    //  #[ORM\JoinColumn(nullable: false)]
-    //   private User $author = null;
-    //  ---
+    #[ORM\JoinColumn(name: "author_id", referencedColumnName: "id", nullable: false, onDelete: "RESTRICT")]
+    private ?User $author;
 
     #[ORM\ManyToOne(targetEntity: Article::class)]
-    #[ORM\JoinColumn(name: "article_id", referencedColumnName: "id", onDelete: "RESTRICT", nullable: false)]
-//      Error with onUpdate
-//    #[ORM\JoinColumn(name: "article_id", referencedColumnName: "id", onDelete: "RESTRICT", onUpdate: "CASCADE", nullable: false)]
-    private ?int $article_id = null;
-
-    //  ---
-    //
-    // ЛИБО АЛЬТЕРНАТИВНЫЙ ВАРИАНТ
-    //  #[ORM\ManyToOne(targetEntity: Article::class)]
-    //  #[ORM\JoinColumn(nullable: false)]
-    //  private Article $article = null;
-    //  ---
+    #[ORM\JoinColumn(name: "article_id", referencedColumnName: "id", nullable: false, onDelete: "RESTRICT")]
+    private ?Article $article;
 
     #[ORM\Column(type: "text")]
     private ?string $comment = null;
 
-    #[ORM\Column(type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
-    private ?string $created_at = null;
+    #[ORM\Column(name: "created_at", type: "datetime", options: ["default" => "CURRENT_TIMESTAMP"])]
+    private ?string $createdAt = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getAuthor(): ?int
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    public function setAuthor(int $author): self
+    public function setAuthor(int $authorId): self
     {
-        $this->author = $author;
+        $this->author = $authorId;
         return $this;
     }
 
-    public function getArticle(): ?int
+    public function getArticle(): ?Article
     {
-        return $this->article_id;
+        return $this->article;
     }
 
-    public function setArticle(int $article): self {
-        $this->article_id = $article;
+    public function setArticle(int $articleId): self
+    {
+        $this->article = $articleId;
         return $this;
     }
 
-    public function getComment(): ?string {
+    public function getComment(): ?string
+    {
         return $this->comment;
     }
 
@@ -85,16 +66,14 @@ class Comment
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTime $createdAt): self
     {
         $this->createdAt = $createdAt;
         return $this;
     }
-
-
 }
