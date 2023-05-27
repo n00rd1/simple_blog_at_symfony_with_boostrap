@@ -61,14 +61,32 @@ class UserController extends AbstractController
         return null;
     }
 
-    #[Route('/user', name: 'app_user')]
+    #[Route('/users', name: 'app_my_user')]
     public function index(EntityManagerInterface $entityManager): Response
     {
+        // Получаю данные авторизации по токену
+        $authService = new AuthService($entityManager);
+        // Получение списка всех пользоватлей
         $users = $entityManager->getRepository(User::class)->findAll();
+        // Получение только конкретногопользователя
+        $user = $authService->getCurrentUser();
 
         return $this->render('user/usr_list.html.twig', [
             'controller_name' => 'UserController',
             'users' => $users,
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/user_info', name: 'user_info')]
+    public function myUser(EntityManagerInterface $entityManager): Response
+    {
+        // Получаю данные авторизации по токену
+        $authService = new AuthService($entityManager);
+        $user = $authService->getCurrentUser();
+        return $this->render('user/usr_info.html.twig', [
+            'controller_name' => 'UserController',
+            'user' => $user,
         ]);
     }
 

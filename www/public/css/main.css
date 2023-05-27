@@ -1,0 +1,163 @@
+#articleTextInput {
+    height: 200px; /* Высота многострочного текстового поля */
+    max-height: 200px; /* Максимальная высота многострочного текстового поля */
+    resize: vertical; /* Разрешить изменение высоты только по вертикали */
+}
+
+/* Дополнительные стили, чтобы текстовое поле выглядело красиво */
+#articleTextInput {
+    color: #000; /* Цвет текста */
+    background-color: #fff; /* Цвет фона */
+    border: 1px solid #ccc; /* Граница */
+    padding: 8px; /* Внутренний отступ */
+    font-size: 14px; /* Размер шрифта */
+    font-family: Arial, sans-serif; /* Шрифт */
+}
+
+/* Стили для фокуса */
+#articleTextInput:focus {
+    outline: none; /* Убрать контур при фокусе */
+    border-color: #007bff; /* Цвет границы при фокусе */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Тень при фокусе */
+}
+
+/* Стили для форм авторизации и регистрации */
+.form-label {
+    font-weight: bold;
+}
+
+.form-control {
+    margin-bottom: 10px;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+/* Стили для кнопок */
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Дополнительные стили, чтобы формы выглядели красиво */
+.modal-content {
+    border-radius: 10px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 15px;
+}
+
+.modal-footer {
+    padding: 15px;
+    justify-content: flex-end;
+}
+
+.input-group-prepend .input-group-text {
+    border-radius: 10px 0 0 10px;
+}
+
+.input-group-append .input-group-text {
+    border-radius: 0 10px 10px 0;
+}
+
+.input-group-prepend .input-group-text,
+.input-group-append .input-group-text {
+    background-color: #f8f9fa;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+.input-group-prepend .input-group-text:hover,
+.input-group-append .input-group-text:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+.input-group .form-control:not(:first-child),
+.input-group .input-group-text:not(:first-child) {
+    border-radius: 0;
+}
+
+.input-group .form-control:not(:last-child),
+.input-group .input-group-text:not(:last-child) {
+    border-radius: 0;
+}
+
+/* Опционально: Стили для приветствия пользователя */
+.d-inline-block.mb-0.text-primary.bg-light {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+/* Вы не авторизованы, пожалуйста, авторизуйтесь */
+.not-authorized {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    color: rgba(17, 95, 239, 0.73);
+}
+
+/* Отображения списка всех зарегистрированных пользователей */
+.user-table-container {
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.user-profile {
+    margin: 1em auto;
+    max-width: 550px;
+    width: 95%;
+    font: 18px/1.5 sans-serif;
+}
+
+.user-profile code {
+    background: #F5F5F5;
+    padding: 2px 6px;
+}
+
+/* Отображение информации о текущем пользователе */
+.user-profile {
+    margin: 1em auto;
+    max-width: 550px;
+    width: 95%;
+    font: 18px/1.5 sans-serif;
+}
+.user-profile code {
+    background: #F5F5F5;
+    padding: 2px 6px;
+}

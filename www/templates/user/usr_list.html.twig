@@ -1,46 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User list!{% endblock %}
+{% block title %}Список пользователей{% endblock %}
 
 {% block header %}
     <li><a href="/article" class="nav-link px-2">Главная</a></li>
-    <li><a href="/user" class="nav-link px-2 link-secondary">Пользователи</a></li>
-    <li><a href="#" class="nav-link px-2">Мой профиль</a></li>
-    <li><a href="/product" class="nav-link px-2">test_page</a></li>
+    <li><a href="/users" class="nav-link px-2 link-secondary">Cписок пользователей</a></li>
+    <li><a href="/user_info" class="nav-link px-2 ">Мой аккаунт</a></li>
 {% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-        table { border: 1px solid black; border-collapse: collapse; }
-        table td { border: 1px solid black; padding: 4px 8px; }
-    </style>
-
-    <!-- TODO В перспективе нужно будеть убрать поля с паролем и токеном аудификации -->
-
-    <div class="example-wrapper">
-        <h1>Список пользователей!</h1>
-        <table>
-            <tr>
-                <td>Уникальный идефенкциальный номер</td>
-                <td>Имя пользователя</td>
-                <td>Имя пользователя</td>
-                <td>Второе имя пользователя</td>
-                <td>Хэш пароля</td>
-                <td>Логин для авторизации</td>
-            </tr>
-            {% for user in users %}
+        <div class="user-table-container">
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.username }}</td>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.surname }}</td>
-                    <td>{{ user.passwordHash }}</td>
-                    <td>{{ user.authToken }}</td>
+                    <th scope="col">Username</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
                 </tr>
-            {% endfor %}
-        </table>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.surname }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    </div>
 {% endblock %}
