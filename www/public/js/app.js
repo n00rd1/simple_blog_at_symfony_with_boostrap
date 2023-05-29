@@ -44,7 +44,6 @@ $(document).ready(function () {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
-                    alert("Авторизация успешна!");
                     location.reload();
                 }
             }
@@ -63,7 +62,6 @@ $(document).ready(function () {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
-                    alert("Вы успешно вышли из системы!");
                     location.reload();
                 }
             }
@@ -86,7 +84,6 @@ $(document).ready(function () {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
-                    alert("Блог успешно опубликован!");
                     location.reload();
                 }
             }
@@ -111,7 +108,6 @@ $(document).ready(function () {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
-                    alert("Комментарий успешно опубликован!");
                     location.reload();
                 }
             }
