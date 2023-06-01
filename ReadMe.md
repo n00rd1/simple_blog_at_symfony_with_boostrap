@@ -18,7 +18,6 @@ Blogify is a web application built using Symfony and Bootstrap, designed to allo
 
 1. Clone my git repository `git clone`
 2. Use a composer `composer install`
-*Note: Instructions on how to set up and run the project locally would be here*
 
 ## Links
 
