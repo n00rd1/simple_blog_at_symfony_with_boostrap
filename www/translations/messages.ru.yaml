@@ -65,13 +65,12 @@ validation:
 
 error:
   user_not_authorized: "Пользователь не авторизован."
+  invalid_csrf: "Сессия устарела. Обновите страницу и повторите действие."
+  request_failed: "Запрос не выполнен. Проверьте соединение и попробуйте снова."
   post_text_required: "Введите текст публикации."
   post_text_too_long: "Текст публикации должен быть не длиннее %max% символов. Лишних символов: %excess%."
   comment_text_required: "Введите текст комментария."
   comment_text_too_long: "Комментарий должен быть не длиннее %max% символов. Лишних символов: %excess%."
   post_not_found: "Публикация не найдена."
   username_exists: "Пользователь с таким username уже существует."
-  auth_token_create_failed: "Не удалось создать токен авторизации."
-  invalid_username_field: "Проверьте поле username."
-  invalid_password_field: "Проверьте поле password."
   invalid_credentials: "Неверный логин или пароль."

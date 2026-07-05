@@ -13,7 +13,13 @@
     <script src="/js/app.js" defer></script>
 </head>
 <body class="app-body"
-      data-user-created-message="{{ 'alert.user_created'|trans }}">
+      data-user-created-message="{{ 'alert.user_created'|trans }}"
+      data-request-failed-message="{{ 'error.request_failed'|trans }}"
+      data-csrf-register="{{ csrf_token('register') }}"
+      data-csrf-login="{{ csrf_token('login') }}"
+      data-csrf-logout="{{ csrf_token('logout') }}"
+      data-csrf-article-add="{{ csrf_token('article_add') }}"
+      data-csrf-comment-add="{{ csrf_token('comment_add') }}">
 <div class="app-shell">
     <header class="site-header">
         <nav class="navbar navbar-expand-lg">

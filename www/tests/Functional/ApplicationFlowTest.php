@@ -43,20 +43,8 @@ class ApplicationFlowTest extends WebTestCase
         self::assertNotSame(md5('secret'), $passwordHash);
         self::assertDoesNotMatchRegularExpression('/^[a-f0-9]{32}$/i', $passwordHash);
 
-        $this->client->request('POST', '/user/login', [
-            'username' => 'johnny',
-            'password' => 'secret',
-        ]);
-
-        self::assertResponseIsSuccessful();
-        $this->assertJsonResponseContains(['success' => true]);
-
-        $this->client->request('POST', '/article/add', [
-            'text' => 'First public note',
-        ]);
-
-        self::assertResponseIsSuccessful();
-        $this->assertJsonResponseContains(['article_id' => 1]);
+        $this->loginUser('johnny', 'secret');
+        $this->createArticle('First public note');
 
         $this->client->request('GET', '/');
 
@@ -73,7 +61,6 @@ class ApplicationFlowTest extends WebTestCase
             'password_hash' => md5('secret'),
             'name' => 'Legacy',
             'surname' => 'User',
-            'auth_token' => bin2hex(random_bytes(32)),
         ]);
 
         $this->loginUser('legacy', 'secret');
@@ -89,7 +76,7 @@ class ApplicationFlowTest extends WebTestCase
         $this->loginUser('author', 'secret');
         $this->createArticle('Post for comments');
 
-        $this->client->request('POST', '/comment/add', [
+        $this->postWithCsrf('/comment/add', 'comment-add', [
             'article_id' => 1,
             'text' => 'Nice post',
         ]);
@@ -102,6 +89,28 @@ class ApplicationFlowTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('.comments-toolbar h1', 'Комментарии');
         self::assertSelectorTextContains('.comment-item p', 'Nice post');
+    }
+
+    public function testAuthenticatedUserCanLogout(): void
+    {
+        $this->registerUser('logout', 'secret', 'Log', 'User');
+        $this->loginUser('logout', 'secret');
+
+        $this->client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.user-pill', 'logout');
+
+        $this->postWithCsrf('/user/logout', 'logout');
+
+        self::assertResponseIsSuccessful();
+        $this->assertJsonResponseContains(['success' => true]);
+
+        $this->client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('.user-pill');
+        self::assertSelectorTextContains('.auth-notice', 'Войдите в аккаунт');
     }
 
     public function testAccountPageShowsCurrentUser(): void
@@ -119,7 +128,7 @@ class ApplicationFlowTest extends WebTestCase
 
     private function registerUser(string $username, string $password, string $name, string $surname): void
     {
-        $this->client->request('POST', '/user/create', [
+        $this->postWithCsrf('/user/create', 'register', [
             'username' => $username,
             'password' => $password,
             'name' => $name,
@@ -132,7 +141,7 @@ class ApplicationFlowTest extends WebTestCase
 
     private function loginUser(string $username, string $password): void
     {
-        $this->client->request('POST', '/user/login', [
+        $this->postWithCsrf('/user/login', 'login', [
             'username' => $username,
             'password' => $password,
         ]);
@@ -143,12 +152,31 @@ class ApplicationFlowTest extends WebTestCase
 
     private function createArticle(string $text): void
     {
-        $this->client->request('POST', '/article/add', [
+        $this->postWithCsrf('/article/add', 'article-add', [
             'text' => $text,
         ]);
 
         self::assertResponseIsSuccessful();
         $this->assertJsonResponseContains(['article_id' => 1]);
+    }
+
+    private function postWithCsrf(string $uri, string $tokenName, array $parameters = []): void
+    {
+        $parameters['_csrf_token'] = $this->fetchCsrfToken($tokenName);
+
+        $this->client->request('POST', $uri, $parameters);
+    }
+
+    private function fetchCsrfToken(string $tokenName): string
+    {
+        $crawler = $this->client->request('GET', '/');
+        $token = $crawler->filter('body')->attr('data-csrf-'.$tokenName);
+
+        self::assertResponseIsSuccessful();
+        self::assertIsString($token);
+        self::assertNotSame('', $token);
+
+        return $token;
     }
 
     private function purgeDatabase(): void

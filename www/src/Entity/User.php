@@ -10,7 +10,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "users")]
 #[ORM\UniqueConstraint(name: "users_username_key", columns: ["username"])]
-#[ORM\UniqueConstraint(name: "users_auth_token_key", columns: ["auth_token"])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -29,9 +28,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 64)]
     private ?string $surname = null;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $authToken = null;
 
     public function getId(): ?int
     {
@@ -53,7 +49,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        $roles = ['ROLE_USER'];
+
+        if ($this->username === 'admin') {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        return array_values(array_unique($roles));
     }
 
     public function eraseCredentials(): void
@@ -101,17 +103,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPasswordHash(string $passwordHash): self
     {
         $this->passwordHash = $passwordHash;
-        return $this;
-    }
-
-    public function getAuthToken(): ?string
-    {
-        return $this->authToken;
-    }
-
-    public function setAuthToken(string $authToken): self
-    {
-        $this->authToken = $authToken;
         return $this;
     }
 }

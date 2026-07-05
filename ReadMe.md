@@ -8,6 +8,7 @@ n00rd1fy is a small Twitter-like Symfony application for publishing short posts,
 
 - PHP 8.3
 - Symfony 6.4
+- Symfony Security
 - Doctrine ORM and Migrations
 - PostgreSQL 18
 - Nginx
@@ -18,6 +19,7 @@ n00rd1fy is a small Twitter-like Symfony application for publishing short posts,
 ## Features
 
 - User registration and login
+- Session-based authentication with CSRF-protected POST actions
 - Short post publishing for authenticated users
 - Comments for authenticated users
 - Public feed for guests
@@ -121,9 +123,9 @@ Server deployment is intentionally not hard-coded. Add a deploy job when the pro
 
 ## Current Technical Debt
 
-- Authentication is still custom; move it fully to Symfony Security authenticators, roles, and CSRF protection before production use.
 - Add browser-level coverage for the JavaScript registration/login flows and toast notifications.
 - Add moderation and rate limiting around posts, likes, and comments before opening public write access.
+- Add persistent user roles and moderation tools instead of deriving admin access from the local bootstrap account.
 
 ## Links
 

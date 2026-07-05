@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -14,7 +14,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
-    const LENGTH_AUTH_TOKEN = 32;
     const MIN_LENGTH_USERNAME = 4;
     const MAX_LENGTH_USERNAME = 64;
 
@@ -68,36 +67,41 @@ class UserController extends AbstractController
     }
 
     #[Route('/users', name: 'app_my_user')]
-    public function index(EntityManagerInterface $entityManager, AuthService $authService): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
         $users = $entityManager->getRepository(User::class)->findAll();
-        $user = $authService->getCurrentUser();
 
         return $this->render('user/usr_list.html.twig', [
             'controller_name' => 'UserController',
             'users' => $users,
-            'user' => $user,
+            'user' => $this->getUser(),
         ]);
     }
 
     #[Route('/user_info', name: 'user_info')]
-    public function myUser(EntityManagerInterface $entityManager, AuthService $authService): Response
+    public function myUser(): Response
     {
-        $user = $authService->getCurrentUser();
-
         return $this->render('user/usr_info.html.twig', [
             'controller_name' => 'UserController',
-            'user' => $user,
+            'user' => $this->getUser(),
         ]);
     }
 
-    #[Route('/user/create', name: 'user_create')]
+    #[Route('/user/create', name: 'user_create', methods: ['POST'])]
     public function create(
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         TranslatorInterface $translator
     ): Response {
+        if (!$this->isCsrfTokenValid('register', (string) $request->request->get('_csrf_token'))) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => $translator->trans('error.invalid_csrf'),
+            ]);
+        }
+
         $username = $request->get('username');
         $password = $request->get('password');
         $name = $request->get('name');
@@ -156,24 +160,11 @@ class UserController extends AbstractController
             return $this->json($surnameValidationResult);
         }
 
-        try {
-            $authToken = bin2hex(random_bytes(self::LENGTH_AUTH_TOKEN));
-        } catch (\Exception $e) {
-            error_log((string) $e);
-
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => $translator->trans('error.auth_token_create_failed'),
-            ]);
-        }
-
         $user = new User();
         $user->setUsername($username);
         $user->setPasswordHash($passwordHasher->hashPassword($user, $password));
         $user->setName($name);
         $user->setSurname($surname);
-        $user->setAuthToken($authToken);
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -181,75 +172,56 @@ class UserController extends AbstractController
         return $this->json(['user_id' => $user->getId()]);
     }
 
-    #[Route('/user/login', name: 'user_login')]
-    public function login(
+    #[Route('/user/login', name: 'user_login', methods: ['POST'])]
+    public function login(TranslatorInterface $translator): Response
+    {
+        return $this->json([
+            'success' => false,
+            'data' => [],
+            'error' => $translator->trans('error.invalid_credentials'),
+        ]);
+    }
+
+    #[Route('/user/logout', name: 'user_logout', methods: ['POST'])]
+    public function logout(Request $request, Security $security, TranslatorInterface $translator): Response
+    {
+        if (!$this->isCsrfTokenValid('logout', (string) $request->request->get('_csrf_token'))) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => $translator->trans('error.invalid_csrf'),
+            ]);
+        }
+
+        if ($security->getUser()) {
+            $security->logout(false);
+        }
+
+        if ($request->hasSession()) {
+            $request->getSession()->invalidate();
+        }
+
+        return $this->json([
+            'success' => true,
+            'data' => [$translator->trans('auth.logout_success')],
+        ]);
+    }
+
+    #[Route('/user/{id}/delete', name: 'user_delete', methods: ['POST'])]
+    public function delete(
+        User $user,
         Request $request,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        AuthService $authService
+        TranslatorInterface $translator
     ): Response {
-        $username = $request->get('username');
-        $password = $request->get('password');
-
-        if (empty($username) || mb_strlen($username) < self::MIN_LENGTH_USERNAME || mb_strlen($username) > self::MAX_LENGTH_USERNAME) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => $translator->trans('error.invalid_username_field'),
-            ]);
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException($translator->trans('error.user_not_authorized'));
         }
 
-        if (empty($password) || mb_strlen($password) < self::MIN_LENGTH_PASSWORD || mb_strlen($password) > self::MAX_LENGTH_PASSWORD) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => $translator->trans('error.invalid_password_field'),
-            ]);
+        if (!$this->isCsrfTokenValid('user_delete_'.$user->getId(), (string) $request->request->get('_csrf_token'))) {
+            throw $this->createAccessDeniedException($translator->trans('error.invalid_csrf'));
         }
 
-        if (!$authService->login($username, $password)) {
-            return $this->json([
-                'success' => false,
-                'data' => [],
-                'error' => $translator->trans('error.invalid_credentials'),
-            ]);
-        }
-
-        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
-
-        $response = $this->json([
-            'success' => true,
-            'data' => [
-                'user' => [
-                    'id' => $user?->getId(),
-                    'username' => $user?->getUsername(),
-                    'name' => $user?->getName(),
-                    'surname' => $user?->getSurname(),
-                ],
-            ],
-        ]);
-        if ($user) {
-            $response->headers->setCookie($authService->createAuthCookie($user->getAuthToken()));
-        }
-
-        return $response;
-    }
-
-    #[Route('/user/logout', name: 'user_logout')]
-    public function logout(Request $request, AuthService $authService, TranslatorInterface $translator): Response
-    {
-        $response = $this->json([
-            'success' => true,
-            'data' => [$translator->trans('auth.logout_success')]
-        ]);
-        $response->headers->setCookie($authService->createLogoutCookie());
-
-        return $response;
-    }
-
-    #[Route('/user/{id}/delete', name: 'user_delete')]
-    public function delete(User $user, EntityManagerInterface $entityManager): Response
-    {
         $entityManager->remove($user);
         $entityManager->flush();
 

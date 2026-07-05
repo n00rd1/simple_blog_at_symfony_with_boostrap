@@ -50,7 +50,6 @@ class EnsureAdminUserCommand extends Command
         if (!$user instanceof User) {
             $user = new User();
             $user->setUsername($username);
-            $user->setAuthToken(bin2hex(random_bytes(32)));
             $this->entityManager->persist($user);
             $created = true;
         }

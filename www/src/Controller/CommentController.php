@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
-use App\Service\AuthService;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,11 +20,8 @@ class CommentController extends AbstractController
     public function showComments(
         $articleId,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        AuthService $authService
+        TranslatorInterface $translator
     ): Response {
-        $user = $authService->getCurrentUser();
-
         $articleRepository = $entityManager->getRepository(Article::class);
         $firstArticle = $articleRepository->find($articleId);
         if (!$firstArticle) {
@@ -38,26 +35,33 @@ class CommentController extends AbstractController
 
         return $this->render('comment/comment.html.twig', [
             'comments' => $comments,
-            'user' => $user,
+            'user' => $this->getUser(),
             'first_article' => $firstArticle,
             'commentCount' => count($comments),
         ]);
     }
 
-    #[Route('/comment/add', name: 'comment_add')]
+    #[Route('/comment/add', name: 'comment_add', methods: ['POST'])]
     public function add(
         Request $request,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        AuthService $authService
+        TranslatorInterface $translator
     ): Response {
-        $user = $authService->getCurrentUser();
+        $user = $this->getUser();
 
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->json([
                 'success' => false,
                 'data' => [],
                 'error' => $translator->trans('error.user_not_authorized'),
+            ]);
+        }
+
+        if (!$this->isCsrfTokenValid('comment_add', (string) $request->request->get('_csrf_token'))) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => $translator->trans('error.invalid_csrf'),
             ]);
         }
 

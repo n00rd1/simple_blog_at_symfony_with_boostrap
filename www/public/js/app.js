@@ -30,11 +30,16 @@ $(document).ready(function () {
         toast.show();
     }
 
+    function handleRequestError() {
+        showNotification(pageMessages.requestFailedMessage);
+    }
+
     $('#createUserSendButton').click(function () {
         $.ajax('/user/create', {
             'method': 'POST',
             'dataType': 'json',
             'data': {
+                '_csrf_token': pageMessages.csrfRegister,
                 'username': $('#createUserModal #createUserUsernameInput').val(),
                 'password': $('#createUserModal #createUserPasswordInput').val(),
                 'name': $('#createUserModal #createUserNameInput').val(),
@@ -49,7 +54,8 @@ $(document).ready(function () {
                         location.reload();
                     }, 700);
                 }
-            }
+            },
+            error: handleRequestError
         });
     });
 
@@ -58,6 +64,7 @@ $(document).ready(function () {
             'method': 'POST',
             'dataType': 'json',
             'data': {
+                '_csrf_token': pageMessages.csrfLogin,
                 'username': $('#loginUserModal #loginUserUsernameInput').val(),
                 'password': $('#loginUserModal #loginUserPasswordInput').val(),
             },
@@ -67,7 +74,8 @@ $(document).ready(function () {
                 } else {
                     location.reload();
                 }
-            }
+            },
+            error: handleRequestError
         });
     });
 
@@ -75,14 +83,17 @@ $(document).ready(function () {
         $.ajax('/user/logout', {
             'method': 'POST',
             'dataType': 'json',
-            'data': {},
+            'data': {
+                '_csrf_token': pageMessages.csrfLogout
+            },
             success: function (response) {
                 if (response.success === false) {
                     showNotification(response.error);
                 } else {
                     location.reload();
                 }
-            }
+            },
+            error: handleRequestError
         });
     });
 
@@ -91,6 +102,7 @@ $(document).ready(function () {
             'method': 'POST',
             'dataType': 'json',
             'data': {
+                '_csrf_token': pageMessages.csrfArticleAdd,
                 'text': $('#addArticleModal #articleTextInput').val(),
             },
             success: function (response) {
@@ -99,7 +111,8 @@ $(document).ready(function () {
                 } else {
                     location.reload();
                 }
-            }
+            },
+            error: handleRequestError
         });
     });
 
@@ -108,6 +121,7 @@ $(document).ready(function () {
             'method': 'POST',
             'dataType': 'json',
             'data': {
+                '_csrf_token': pageMessages.csrfCommentAdd,
                 'article_id': $('#articleId').data('id'),
                 'text': $('#addCommentModal #commentTextInput').val(),
             },
@@ -117,7 +131,8 @@ $(document).ready(function () {
                 } else {
                     location.reload();
                 }
-            }
+            },
+            error: handleRequestError
         });
     });
 

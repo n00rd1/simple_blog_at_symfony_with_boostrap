@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,11 +21,6 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    /**
-     * @param User $entity
-     * @param bool $flush
-     * @return void
-     */
     public function save(User $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -36,11 +30,6 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @param User $entity
-     * @param bool $flush
-     * @return void
-     */
     public function remove(User $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -50,11 +39,6 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return User|null
-     */
     public function findById(int $id): ?User
     {
         return $this->createQueryBuilder('u')
@@ -64,31 +48,11 @@ class UserRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param string $username
-     *
-     * @return User|null
-     */
     public function findByUsername(string $username): ?User
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.username = :username')
             ->setParameter('username', $username)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    /**
-     * @param string $authToken
-     *
-     * @return User|null
-     * @throws NonUniqueResultException
-     */
-    public function findByAuthToken(string $authToken): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.authToken = :authToken')
-            ->setParameter('authToken', $authToken)
             ->getQuery()
             ->getOneOrNullResult();
     }
