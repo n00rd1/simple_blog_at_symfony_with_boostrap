@@ -20,9 +20,9 @@ class CommentController extends AbstractController
     public function showComments(
         $articleId,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        AuthService $authService
     ): Response {
-        $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
         $articleRepository = $entityManager->getRepository(Article::class);
@@ -48,9 +48,9 @@ class CommentController extends AbstractController
     public function add(
         Request $request,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        AuthService $authService
     ): Response {
-        $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
         if (!$user) {

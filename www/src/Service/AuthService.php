@@ -5,6 +5,8 @@ namespace App\Service;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class AuthService
 {
@@ -12,14 +14,22 @@ class AuthService
 
     protected EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        private readonly RequestStack $requestStack
+    )
     {
         $this->entityManager = $entityManager;
     }
 
-    public function setAuthCookie(string $cookieValue): void
+    public function createAuthCookie(string $cookieValue): Cookie
     {
-        setcookie('auth_cookie', $cookieValue, time() + self::AUTH_EXPIRE, '/');
+        return Cookie::create('auth_cookie', $cookieValue, time() + self::AUTH_EXPIRE, '/', null, false, true, false, Cookie::SAMESITE_LAX);
+    }
+
+    public function createLogoutCookie(): Cookie
+    {
+        return Cookie::create('auth_cookie', '', time() - 1, '/', null, false, true, false, Cookie::SAMESITE_LAX);
     }
 
     /**
@@ -45,15 +55,10 @@ class AuthService
         return true;
     }
 
-    public function logout(): void
-    {
-        setcookie('auth_cookie', '', time() - 1, '/');
-    }
-
     public function getUserInfoByAuthToken(): ?User
     {
-        if (isset($_COOKIE['auth_cookie'])) {
-            $authCookie = $_COOKIE['auth_cookie'];
+        $authCookie = $this->getAuthCookieValue();
+        if ($authCookie) {
             $user = $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
 
             if (!$user) {
@@ -68,10 +73,12 @@ class AuthService
 
     public function getCurrentUser(): ?User
     {
-        if (empty($_COOKIE['auth_cookie'])) {
+        $authCookie = $this->getAuthCookieValue();
+        if (!$authCookie) {
             return null;
         }
-        return $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $_COOKIE['auth_cookie']]);
+
+        return $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
     }
 
     /**
@@ -79,20 +86,21 @@ class AuthService
      */
     private function generateAuthCookie(): string
     {
-        $randomValue = bin2hex(random_bytes(32));
-        $this->setAuthCookie($randomValue);
-
-        return $randomValue;
+        return bin2hex(random_bytes(32));
     }
 
     protected function verifyAuthCookie(): ?User
     {
-        if (isset($_COOKIE['auth_cookie'])) {
-            $authCookie = $_COOKIE['auth_cookie'];
-
+        $authCookie = $this->getAuthCookieValue();
+        if ($authCookie) {
             return $this->entityManager->getRepository(User::class)->findOneBy(['authToken' => $authCookie]);
         }
 
         return null;
+    }
+
+    private function getAuthCookieValue(): ?string
+    {
+        return $this->requestStack->getCurrentRequest()?->cookies->get('auth_cookie') ?? $_COOKIE['auth_cookie'] ?? null;
     }
 }

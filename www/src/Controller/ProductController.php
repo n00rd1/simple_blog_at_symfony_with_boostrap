@@ -14,9 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     #[Route('/product', name: 'app_product')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, AuthService $authService): Response
     {
-        $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
         $products = $entityManager->getRepository(Product::class)->findAll();
 

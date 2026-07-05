@@ -16,9 +16,8 @@ class ArticleController extends AbstractController
     const LENGTH_TEXT_STRING = 512;
 
     #[Route('/', name: 'app_article')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, AuthService $authService): Response
     {
-        $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
         $articles = $entityManager->getRepository(Article::class)->findBy([], ['createdAt' => 'DESC']);
 
@@ -33,9 +32,9 @@ class ArticleController extends AbstractController
     public function add(
         Request $request,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        AuthService $authService
     ): Response {
-        $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
         if (!$user) {

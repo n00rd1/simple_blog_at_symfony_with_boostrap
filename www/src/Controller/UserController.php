@@ -67,9 +67,8 @@ class UserController extends AbstractController
     }
 
     #[Route('/users', name: 'app_my_user')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, AuthService $authService): Response
     {
-        $authService = new AuthService($entityManager);
         $users = $entityManager->getRepository(User::class)->findAll();
         $user = $authService->getCurrentUser();
 
@@ -81,9 +80,8 @@ class UserController extends AbstractController
     }
 
     #[Route('/user_info', name: 'user_info')]
-    public function myUser(EntityManagerInterface $entityManager): Response
+    public function myUser(EntityManagerInterface $entityManager, AuthService $authService): Response
     {
-        $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
         return $this->render('user/usr_info.html.twig', [
@@ -185,9 +183,9 @@ class UserController extends AbstractController
     public function login(
         Request $request,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        AuthService $authService
     ): Response {
-        $authService = new AuthService($entityManager);
         $username = $request->get('username');
         $password = $request->get('password');
 
@@ -217,7 +215,7 @@ class UserController extends AbstractController
 
         $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
 
-        return $this->json([
+        $response = $this->json([
             'success' => true,
             'data' => [
                 'user' => [
@@ -228,18 +226,23 @@ class UserController extends AbstractController
                 ],
             ],
         ]);
+        if ($user) {
+            $response->headers->setCookie($authService->createAuthCookie($user->getAuthToken()));
+        }
+
+        return $response;
     }
 
     #[Route('/user/logout', name: 'user_logout')]
-    public function logout(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator): Response
+    public function logout(Request $request, AuthService $authService, TranslatorInterface $translator): Response
     {
-        $authService = new AuthService($entityManager);
-        $authService->logout();
-
-        return $this->json([
+        $response = $this->json([
             'success' => true,
             'data' => [$translator->trans('auth.logout_success')]
         ]);
+        $response->headers->setCookie($authService->createLogoutCookie());
+
+        return $response;
     }
 
     #[Route('/user/{id}/delete', name: 'user_delete')]
