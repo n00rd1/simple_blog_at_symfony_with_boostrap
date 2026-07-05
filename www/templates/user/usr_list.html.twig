@@ -1,21 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Список пользователей{% endblock %}
+{% block title %}{{ 'title.users'|trans }}{% endblock %}
 
 {% block header %}
-    <li><a href="/" class="nav-link px-2">Главная</a></li>
-    <li><a href="/users" class="nav-link px-2 link-secondary">Cписок пользователей</a></li>
-    <li><a href="/user_info" class="nav-link px-2 ">Мой аккаунт</a></li>
+    <li class="nav-item"><a href="/" class="nav-link">{{ 'nav.feed'|trans }}</a></li>
+    <li class="nav-item"><a href="/users" class="nav-link active">{{ 'nav.users'|trans }}</a></li>
+    <li class="nav-item"><a href="/user_info" class="nav-link">{{ 'nav.account'|trans }}</a></li>
 {% endblock %}
 
 {% block body %}
-    <div class="user-table-container">
-        <table class="table table-striped">
+    <section class="profile-panel">
+        <div class="feed-title-row">
+            <div>
+                <p class="section-kicker">{{ 'users.kicker'|trans }}</p>
+                <h1>{{ 'users.heading'|trans }}</h1>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+        <table class="table table-hover align-middle user-table">
             <thead>
             <tr>
-                <th scope="col">Username</th>
-                <th scope="col">Name</th>
-                <th scope="col">Surname</th>
+                <th scope="col">{{ 'field.username'|trans }}</th>
+                <th scope="col">{{ 'field.first_name'|trans }}</th>
+                <th scope="col">{{ 'field.last_name'|trans }}</th>
             </tr>
             </thead>
             <tbody>
@@ -28,6 +36,7 @@
             {% endfor %}
             </tbody>
         </table>
-    </div>
+        </div>
+    </section>
 
 {% endblock %}

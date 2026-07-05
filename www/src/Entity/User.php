@@ -5,7 +5,14 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserRepository::class), ORM\Table(name: "users")]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(
+    name: "users",
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: "users_username_key", columns: ["username"]),
+        new ORM\UniqueConstraint(name: "users_auth_token_key", columns: ["auth_token"]),
+    ]
+)]
 class User
 {
     #[ORM\Id]
@@ -19,10 +26,10 @@ class User
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $passwordHash = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 64)]
     private ?string $name = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 64)]
     private ?string $surname = null;
 
     #[ORM\Column(type: 'string', length: 255)]

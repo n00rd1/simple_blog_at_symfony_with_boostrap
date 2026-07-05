@@ -1,39 +1,141 @@
-# Blogify: Symfony simple Blog Platform
-Blogify is a web application built using Symfony and Bootstrap, designed to allow users to create and view blog posts. The application also includes user registration and login functionality, allowing registered users to comment on blog posts. It is intended for learning and practicing development with Symfony and Bootstrap, as well as honing PHP development skills.
+# n00rd1fy
 
+[![CI/CD](https://github.com/n00rd1/simple_blog_at_symfony_with_boostrap/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/n00rd1/simple_blog_at_symfony_with_boostrap/actions/workflows/ci-cd.yml)
 
-![Symfony](https://symfony.com/logos/symfony_black_03.png)
-![Bootstrap](https://getbootstrap.com/docs/5.0/assets/img/bootstrap-icons.png)
+n00rd1fy is a small Twitter-like Symfony application for publishing short posts, commenting, and working with simple user accounts. The project is built for learning Symfony, Doctrine, Twig, Bootstrap, Docker, and basic delivery automation.
 
+## Stack
+
+- PHP 8.3
+- Symfony 6.4
+- Doctrine ORM and Migrations
+- PostgreSQL 18
+- Nginx
+- Bootstrap 5
+- jQuery
+- Docker Compose
 
 ## Features
 
-- User Registration: New users can create an account.
-- User Login: Registered users can log in to their accounts.
-- Blog Creation: Logged-in users can create new blog posts.
-- Commenting: Logged-in users can comment on blog posts.
-- View Blogs: All users, including guests, can view blog posts.
+- User registration and login
+- Short post publishing for authenticated users
+- Comments for authenticated users
+- Public feed for guests
+- User list and profile page
+- Russian and English interface
+- Local admin bootstrap command
+- GitHub Actions CI/CD workflow
 
-## Setup
+## Local Setup
 
-1. Clone my git repository `git clone`
-2. Use a composer `composer install`
+Clone the repository and start containers:
+
+```bash
+git clone https://github.com/n00rd1/simple_blog_at_symfony_with_boostrap.git
+cd simple_blog_at_symfony_with_boostrap
+docker compose up -d --build
+```
+
+Install PHP dependencies if needed:
+
+```bash
+docker compose exec php composer install
+```
+
+Run database migrations:
+
+```bash
+docker compose exec php php bin/console doctrine:migrations:migrate
+```
+
+Create or reset the local admin user:
+
+```bash
+docker compose exec php php bin/console app:ensure-admin-user --username=admin --password=admin
+```
+
+Open the app:
+
+```text
+http://localhost:8080
+```
+
+Default local login:
+
+```text
+username: admin
+password: admin
+```
+
+## Useful Commands
+
+```bash
+# Validate Docker Compose
+docker compose config --quiet
+
+# Check routes
+docker compose exec php php bin/console debug:router
+
+# Check migrations
+docker compose exec php php bin/console doctrine:migrations:status
+
+# Lint Twig templates
+docker compose exec php php bin/console lint:twig templates
+
+# Lint container wiring
+docker compose exec php php bin/console lint:container
+
+# Run tests
+docker compose exec php php bin/phpunit
+```
+
+## CI/CD
+
+GitHub Actions workflow: `.github/workflows/ci-cd.yml`
+
+The workflow runs on pushes and pull requests to `main` and `master`.
+
+CI checks:
+
+- Composer metadata validation
+- Composer install
+- PHP syntax checks
+- PostgreSQL service startup
+- Doctrine database creation and migrations
+- Admin user bootstrap command
+- Symfony YAML, Twig, and container linting
+- PHPUnit
+
+Delivery automation:
+
+- Docker Compose validation
+- Docker image build for `php` and `postgresql`
+- PHP runtime image publication to GitHub Container Registry on push:
+
+```text
+ghcr.io/n00rd1/n00rd1fy-php:latest
+ghcr.io/n00rd1/n00rd1fy-php:<commit-sha>
+```
+
+Server deployment is intentionally not hard-coded. Add a deploy job when the production host, deployment path, and required GitHub secrets are known.
+
+## Current Technical Debt
+
+- Authentication is custom and currently uses `md5`; migrate it to Symfony Security and password hashers before production use.
+- Database schema has historical manual SQL migrations, so `doctrine:schema:validate` reports drift. Review generated diffs before applying them.
+- `/product` is a test page and should be removed or separated from the main app.
+- PHPUnit is configured, but meaningful functional tests still need to be added.
 
 ## Links
 
 - [Symfony](https://symfony.com/)
 - [Bootstrap](https://getbootstrap.com/)
 - [Twig](https://twig.symfony.com/)
-
-## Contributing
-
-We welcome contributions to the Blogify project. Please see our contributing guidelines for more details.
+- [Doctrine](https://www.doctrine-project.org/)
 
 ## Contact
 
-If you have any questions, comments, or feedback, please feel free to reach out to me:
-
 - Email: [mukhamedshin14@mail.ru](mailto:mukhamedshin14@mail.ru)
 - GitHub: [@n00rd1](https://github.com/n00rd1)
-- LinkedIn: [https://www.linkedin.com/in/n00rd1/](https://www.linkedin.com/in/n00rd1/)
-- Telegram: [@N00rd1](https://t.me/N00rd1)
+- LinkedIn: [@n00rd1](https://www.linkedin.com/in/n00rd1/)
+- Telegram: [@n00rd1](https://t.me/n00rd1)

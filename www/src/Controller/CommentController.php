@@ -2,52 +2,54 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Service\AuthService;
-use App\Repository\CommentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-
-// Для работы с HTTP кодом
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CommentController extends AbstractController
 {
     const LENGTH_COMMENT_STRING = 512;
 
     #[Route('/comments/{articleId}', name: 'app_comments')]
-    public function showComments($articleId, EntityManagerInterface $entityManager): Response
-    {
-        // Получение текущего пользователя из куки (для отображения)
+    public function showComments(
+        $articleId,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ): Response {
         $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
-        // Получение исходных данных комментария
         $articleRepository = $entityManager->getRepository(Article::class);
         $firstArticle = $articleRepository->find($articleId);
+        if (!$firstArticle) {
+            throw $this->createNotFoundException($translator->trans('error.post_not_found'));
+        }
 
-        // Получение всех комментариев к записи
-        $comments = $entityManager->getRepository(Comment::class)->findBy(['article' => $firstArticle]);
-
-        // Счетчик для комментариев
-        $commentCount = count($comments);
+        $comments = $entityManager->getRepository(Comment::class)->findBy(
+            ['article' => $firstArticle],
+            ['createdAt' => 'ASC']
+        );
 
         return $this->render('comment/comment.html.twig', [
             'comments' => $comments,
             'user' => $user,
             'first_article' => $firstArticle,
-            'commentCount' => $commentCount,
+            'commentCount' => count($comments),
         ]);
     }
 
     #[Route('/comment/add', name: 'comment_add')]
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Получаю данные авторизации пользователя по токену
+    public function add(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ): Response {
         $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
@@ -55,7 +57,7 @@ class CommentController extends AbstractController
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Пользователь не авторизован",
+                'error' => $translator->trans('error.user_not_authorized'),
             ]);
         }
 
@@ -65,35 +67,33 @@ class CommentController extends AbstractController
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Не заполнено поле с текстом комментария",
+                'error' => $translator->trans('error.comment_text_required'),
             ]);
         }
 
         if (mb_strlen($text) > self::LENGTH_COMMENT_STRING) {
             $excessLength = mb_strlen($text) - self::LENGTH_COMMENT_STRING;
-            $maxLenStr = self::LENGTH_COMMENT_STRING;
 
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Поле с текстом комментария должно быть не более $maxLenStr символов. Сейчас лишних символов: $excessLength",
+                'error' => $translator->trans('error.comment_text_too_long', [
+                    '%max%' => self::LENGTH_COMMENT_STRING,
+                    '%excess%' => $excessLength,
+                ]),
             ]);
         }
 
-        // Получаю объект Article
-        $articles = $entityManager->getRepository(Article::class);
-        $article = $articles->find($request->get('article_id'));
-
+        $article = $entityManager->getRepository(Article::class)->find($request->get('article_id'));
         if (!$article) {
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Запись блога не найдена",
+                'error' => $translator->trans('error.post_not_found'),
             ]);
         }
 
         $comment = new Comment();
-
         $comment->setAuthor($user);
         $comment->setArticle($article);
         $comment->setComment($text);

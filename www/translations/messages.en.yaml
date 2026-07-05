@@ -1,0 +1,90 @@
+title:
+  feed: "Publication Feed"
+  comments: "Comments"
+  users: "Users"
+  account: "My Account"
+  catalog: "Demo Catalog"
+
+nav:
+  feed: "Feed"
+  users: "Users"
+  account: "My account"
+  catalog: "Catalog"
+  language: "Interface language"
+
+auth:
+  login: "Log in"
+  logout: "Log out"
+  register: "Sign up"
+  create_account: "Create account"
+  login_title: "Log in to your account"
+  logout_success: "You have been logged out"
+
+button:
+  close: "Close"
+  publish: "Publish"
+  add: "Add"
+
+field:
+  username: "Username"
+  password: "Password"
+  first_name: "First name"
+  last_name: "Last name"
+
+feed:
+  kicker: "Microblog"
+  heading: "Publication feed"
+  new_post: "New post"
+  auth_notice: "Log in to publish posts and leave comments."
+  empty: "No posts yet. The first publication will appear here."
+  create_title: "Create publication"
+  post_text: "Publication text"
+
+comments:
+  link: "Comments"
+  heading: "Comments"
+  back_to_feed: "Back to feed"
+  reply: "Reply"
+  empty: "No comments yet."
+  create_title: "Leave a comment"
+  comment_text: "Comment text"
+
+users:
+  kicker: "Community"
+  heading: "Users"
+
+account:
+  kicker: "Account"
+  not_authorized: "You are not authorized. Log in or create an account."
+
+catalog:
+  heading: "Demo catalog"
+  name: "Name"
+  size: "Size"
+  price: "Price"
+  primary_action: "Primary action"
+  secondary_action: "Secondary action"
+  add_product: "Add product"
+  name_placeholder: "For example: summer jeans"
+
+alert:
+  user_created: "User registered successfully."
+  product_created: "Product added."
+
+validation:
+  field_required: "The \"%field%\" field is required."
+  field_min_length: "The \"%field%\" field must be at least %min% characters long."
+  field_max_length: "The \"%field%\" field must be no longer than %max% characters."
+
+error:
+  user_not_authorized: "User is not authorized."
+  post_text_required: "Enter publication text."
+  post_text_too_long: "Publication text must be no longer than %max% characters. Extra characters: %excess%."
+  comment_text_required: "Enter comment text."
+  comment_text_too_long: "Comment must be no longer than %max% characters. Extra characters: %excess%."
+  post_not_found: "Publication not found."
+  username_exists: "A user with this username already exists."
+  auth_token_create_failed: "Could not create authorization token."
+  invalid_username_field: "Check the username field."
+  invalid_password_field: "Check the password field."
+  invalid_credentials: "Invalid username or password."

@@ -1,0 +1,90 @@
+title:
+  feed: "Лента публикаций"
+  comments: "Комментарии"
+  users: "Пользователи"
+  account: "Мой аккаунт"
+  catalog: "Демо-каталог"
+
+nav:
+  feed: "Лента"
+  users: "Пользователи"
+  account: "Мой аккаунт"
+  catalog: "Каталог"
+  language: "Язык интерфейса"
+
+auth:
+  login: "Войти"
+  logout: "Выйти"
+  register: "Регистрация"
+  create_account: "Создать аккаунт"
+  login_title: "Войти в аккаунт"
+  logout_success: "Выход из аккаунта выполнен"
+
+button:
+  close: "Закрыть"
+  publish: "Опубликовать"
+  add: "Добавить"
+
+field:
+  username: "Username"
+  password: "Пароль"
+  first_name: "Имя"
+  last_name: "Фамилия"
+
+feed:
+  kicker: "Микроблог"
+  heading: "Лента публикаций"
+  new_post: "Новая запись"
+  auth_notice: "Войдите в аккаунт, чтобы публиковать записи и оставлять комментарии."
+  empty: "Пока нет публикаций. Первая запись появится здесь."
+  create_title: "Создать публикацию"
+  post_text: "Текст публикации"
+
+comments:
+  link: "Комментарии"
+  heading: "Комментарии"
+  back_to_feed: "Назад к ленте"
+  reply: "Ответить"
+  empty: "Пока нет комментариев."
+  create_title: "Оставить комментарий"
+  comment_text: "Текст комментария"
+
+users:
+  kicker: "Сообщество"
+  heading: "Пользователи"
+
+account:
+  kicker: "Аккаунт"
+  not_authorized: "Вы не авторизованы. Войдите в аккаунт или зарегистрируйтесь."
+
+catalog:
+  heading: "Демо-каталог"
+  name: "Наименование"
+  size: "Размер"
+  price: "Цена"
+  primary_action: "Основное действие"
+  secondary_action: "Дополнительное действие"
+  add_product: "Добавить товар"
+  name_placeholder: "Например: летние джинсы"
+
+alert:
+  user_created: "Пользователь успешно зарегистрирован."
+  product_created: "Товар добавлен."
+
+validation:
+  field_required: "Поле «%field%» обязательно для заполнения."
+  field_min_length: "Поле «%field%» должно быть не короче %min% символов."
+  field_max_length: "Поле «%field%» должно быть не длиннее %max% символов."
+
+error:
+  user_not_authorized: "Пользователь не авторизован."
+  post_text_required: "Введите текст публикации."
+  post_text_too_long: "Текст публикации должен быть не длиннее %max% символов. Лишних символов: %excess%."
+  comment_text_required: "Введите текст комментария."
+  comment_text_too_long: "Комментарий должен быть не длиннее %max% символов. Лишних символов: %excess%."
+  post_not_found: "Публикация не найдена."
+  username_exists: "Пользователь с таким username уже существует."
+  auth_token_create_failed: "Не удалось создать токен авторизации."
+  invalid_username_field: "Проверьте поле username."
+  invalid_password_field: "Проверьте поле password."
+  invalid_credentials: "Неверный логин или пароль."

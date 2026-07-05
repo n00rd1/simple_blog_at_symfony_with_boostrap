@@ -5,12 +5,11 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
-
-// Для работы с HTTP кодом
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ArticleController extends AbstractController
 {
@@ -21,7 +20,7 @@ class ArticleController extends AbstractController
     {
         $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
-        $articles = $entityManager->getRepository(Article::class)->findAll();
+        $articles = $entityManager->getRepository(Article::class)->findBy([], ['createdAt' => 'DESC']);
 
         return $this->render('article/article_list.html.twig', [
             'controller_name' => 'ArticleController',
@@ -31,9 +30,11 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/article/add', name: 'article_add')]
-    public function add(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Получаю данные авторизации по токену
+    public function add(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ): Response {
         $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
 
@@ -41,7 +42,7 @@ class ArticleController extends AbstractController
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Пользователь не авторизован",
+                'error' => $translator->trans('error.user_not_authorized'),
             ]);
         }
 
@@ -51,7 +52,7 @@ class ArticleController extends AbstractController
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Не заполнено поле с текстом блога",
+                'error' => $translator->trans('error.post_text_required'),
             ]);
         }
 
@@ -62,7 +63,10 @@ class ArticleController extends AbstractController
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => "Поле с текстом блога должно быть не более $maxLenStr символов. Сейчас лишних символов: $excessLength",
+                'error' => $translator->trans('error.post_text_too_long', [
+                    '%max%' => $maxLenStr,
+                    '%excess%' => $excessLength,
+                ]),
             ]);
         }
 
@@ -83,6 +87,6 @@ class ArticleController extends AbstractController
         $entityManager->remove($article);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_product');
+        return $this->redirectToRoute('app_article');
     }
 }

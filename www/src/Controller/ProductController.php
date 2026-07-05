@@ -16,11 +16,14 @@ class ProductController extends AbstractController
     #[Route('/product', name: 'app_product')]
     public function index(EntityManagerInterface $entityManager): Response
     {
+        $authService = new AuthService($entityManager);
+        $user = $authService->getCurrentUser();
         $products = $entityManager->getRepository(Product::class)->findAll();
 
         return $this->render('product/index.html.twig', [
             'controller_name' => 'ProductController',
             'products' => $products,
+            'user' => $user,
         ]);
     }
 

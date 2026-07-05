@@ -1,11 +1,6 @@
 $(document).ready(function () {
-    /**
-     * Для работы с регистрацией
-     * createUserUsernameInput  - Создание имени пользователя
-     * createUserPasswordInput  - Создание пароля
-     * createUserNameInput      - Создание имени
-     * createUserSurnameInput   - Создание фамилии
-     */
+    const pageMessages = document.body.dataset;
+
     $('#createUserSendButton').click(function () {
         $.ajax('/user/create', {
             'method': 'POST',
@@ -16,22 +11,17 @@ $(document).ready(function () {
                 'name': $('#createUserModal #createUserNameInput').val(),
                 'surname': $('#createUserModal #createUserSurnameInput').val()
             },
-            success: function (response, status) {
+            success: function (response) {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
-                    alert("Пользователь успешно зарегистрирован!");
+                    alert(pageMessages.userCreatedMessage);
                     location.reload();
                 }
             }
         });
     });
 
-    /**
-     * Для работы с авторизацией
-     * loginUserUsernameInput - поле для указания имени пользователя
-     * loginUserPasswordInput - поле для указания пароля
-     */
     $('#loginUserSendButton').click(function () {
         $.ajax('/user/login', {
             'method': 'POST',
@@ -40,7 +30,7 @@ $(document).ready(function () {
                 'username': $('#loginUserModal #loginUserUsernameInput').val(),
                 'password': $('#loginUserModal #loginUserPasswordInput').val(),
             },
-            success: function (response, status) {
+            success: function (response) {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
@@ -50,15 +40,12 @@ $(document).ready(function () {
         });
     });
 
-    /**
-     * Для выхода из учётной записи
-     */
     $('#logoutUserButton').click(function () {
         $.ajax('/user/logout', {
             'method': 'POST',
             'dataType': 'json',
             'data': {},
-            success: function (response, status) {
+            success: function (response) {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
@@ -68,11 +55,6 @@ $(document).ready(function () {
         });
     });
 
-    /**
-     * Для создания блога
-     *  articleAuthorIdInput - поле для отображения пользовательского ника
-     *  articleTextInput - поле для указания текста блога
-     */
     $('#addArticleSendButton').click(function () {
         $.ajax('/article/add', {
             'method': 'POST',
@@ -80,7 +62,7 @@ $(document).ready(function () {
             'data': {
                 'text': $('#addArticleModal #articleTextInput').val(),
             },
-            success: function (response, status) {
+            success: function (response) {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
@@ -90,13 +72,7 @@ $(document).ready(function () {
         });
     });
 
-    /**
-     * Для создания блога
-     *  articleAuthorIdInput - поле для отображения пользовательского ника
-     *  articleTextInput - поле для указания текста блога
-     */
     $('#addCommentSendButton').click(function () {
-
         $.ajax('/comment/add', {
             'method': 'POST',
             'dataType': 'json',
@@ -104,7 +80,7 @@ $(document).ready(function () {
                 'article_id': $('#articleId').data('id'),
                 'text': $('#addCommentModal #commentTextInput').val(),
             },
-            success: function (response, status) {
+            success: function (response) {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
@@ -114,9 +90,6 @@ $(document).ready(function () {
         });
     });
 
-    /**
-     * Пример написания кода по добавлению информации
-     */
     $('#addProductSendButton').click(function () {
         $.ajax('/product/add', {
             'method': 'POST',
@@ -126,15 +99,14 @@ $(document).ready(function () {
                 'price': $('#addProductModal #productPriceInput').val(),
                 'size': $('#addProductModal #productSizeInput').val()
             },
-            success: function (response, status) {
+            success: function (response) {
                 if (response.success === false) {
                     alert(response.error);
                 } else {
-                    alert("Товар успешно добавлен в корзину!");
+                    alert(pageMessages.productCreatedMessage);
                     location.reload();
                 }
             }
         });
     });
-
 });

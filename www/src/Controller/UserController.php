@@ -3,15 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
 use App\Service\AuthService;
 use Doctrine\ORM\EntityManagerInterface;
-
-// Для работы с HTTP кодом
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
@@ -28,47 +26,51 @@ class UserController extends AbstractController
     const MIN_LENGTH_SURNAME = 4;
     const MAX_LENGTH_SURNAME = 64;
 
-    private function validateField($field, $minLength, $maxLength, $fieldName)
-    {
-        // Проверка на пустоту поля
+    private function validateField(
+        ?string $field,
+        int $minLength,
+        int $maxLength,
+        string $fieldName,
+        TranslatorInterface $translator
+    ): ?array {
         if (empty($field)) {
             return [
                 'success' => false,
                 'data' => [],
-                'error' => "Не заполнено поле с $fieldName",
+                'error' => $translator->trans('validation.field_required', ['%field%' => $fieldName]),
             ];
         }
 
-        // Проверка минимальной длины
         if (mb_strlen($field) < $minLength) {
             return [
                 'success' => false,
                 'data' => [],
-                'error' => "Поле с $fieldName должно быть не менее $minLength символов",
+                'error' => $translator->trans('validation.field_min_length', [
+                    '%field%' => $fieldName,
+                    '%min%' => $minLength,
+                ]),
             ];
         }
 
-        // Проверка максимальной длины
         if (mb_strlen($field) > $maxLength) {
             return [
                 'success' => false,
                 'data' => [],
-                'error' => "Поле с $fieldName должно быть не более $maxLength символов",
+                'error' => $translator->trans('validation.field_max_length', [
+                    '%field%' => $fieldName,
+                    '%max%' => $maxLength,
+                ]),
             ];
         }
 
-        // Если все проверки пройдены, возвращаем null
         return null;
     }
 
     #[Route('/users', name: 'app_my_user')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        // Получаю данные авторизации по токену
         $authService = new AuthService($entityManager);
-        // Получение списка всех пользоватлей
         $users = $entityManager->getRepository(User::class)->findAll();
-        // Получение только конкретногопользователя
         $user = $authService->getCurrentUser();
 
         return $this->render('user/usr_list.html.twig', [
@@ -81,9 +83,9 @@ class UserController extends AbstractController
     #[Route('/user_info', name: 'user_info')]
     public function myUser(EntityManagerInterface $entityManager): Response
     {
-        // Получаю данные авторизации по токену
         $authService = new AuthService($entityManager);
         $user = $authService->getCurrentUser();
+
         return $this->render('user/usr_info.html.twig', [
             'controller_name' => 'UserController',
             'user' => $user,
@@ -91,72 +93,88 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/create', name: 'user_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function create(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ): Response {
         $username = $request->get('username');
         $password = $request->get('password');
         $name = $request->get('name');
         $surname = $request->get('surname');
 
-        // Валидация логина
-        $usernameValidationResult = $this->validateField($username, self::MIN_LENGTH_USERNAME, self::MAX_LENGTH_USERNAME, 'логином');
+        $usernameValidationResult = $this->validateField(
+            $username,
+            self::MIN_LENGTH_USERNAME,
+            self::MAX_LENGTH_USERNAME,
+            $translator->trans('field.username'),
+            $translator
+        );
         if ($usernameValidationResult) {
             return $this->json($usernameValidationResult);
         }
 
-        // Проверка уникальности имени пользователя
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
         if ($existingUser) {
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => 'Пользователь с таким логином уже существует',
+                'error' => $translator->trans('error.username_exists'),
             ]);
         }
 
-        // Валидация пароля
-        $passwordValidationResult = $this->validateField($password, self::MIN_LENGTH_PASSWORD, self::MAX_LENGTH_PASSWORD, 'паролем');
+        $passwordValidationResult = $this->validateField(
+            $password,
+            self::MIN_LENGTH_PASSWORD,
+            self::MAX_LENGTH_PASSWORD,
+            $translator->trans('field.password'),
+            $translator
+        );
         if ($passwordValidationResult) {
             return $this->json($passwordValidationResult);
         }
 
-        // Валидация имени пользователя
-        $nameValidationResult = $this->validateField($name, self::MIN_LENGTH_NAME, self::MAX_LENGTH_NAME, 'именем');
+        $nameValidationResult = $this->validateField(
+            $name,
+            self::MIN_LENGTH_NAME,
+            self::MAX_LENGTH_NAME,
+            $translator->trans('field.first_name'),
+            $translator
+        );
         if ($nameValidationResult) {
             return $this->json($nameValidationResult);
         }
 
-        // Валидация фамилии пользователя
-        $surnameValidationResult = $this->validateField($surname, self::MIN_LENGTH_SURNAME, self::MAX_LENGTH_SURNAME, 'фамилией');
+        $surnameValidationResult = $this->validateField(
+            $surname,
+            self::MIN_LENGTH_SURNAME,
+            self::MAX_LENGTH_SURNAME,
+            $translator->trans('field.last_name'),
+            $translator
+        );
         if ($surnameValidationResult) {
             return $this->json($surnameValidationResult);
         }
 
-        // Перевод пароля в необходимый формат для дальнейшего сравнения
-        $passwordHash = md5($password);
-
-        // Генерация токена для аудефикации
         try {
             $authToken = bin2hex(random_bytes(self::LENGTH_AUTH_TOKEN));
         } catch (\Exception $e) {
-            error_log($e);                          // логируем ошибку
+            error_log((string) $e);
+
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => 'Произошла ошибка при создании токена аутентификации',
+                'error' => $translator->trans('error.auth_token_create_failed'),
             ]);
         }
 
-
-        // Создание нового объекта (сущности) пользователя и заполненине всех его полей
         $user = new User();
         $user->setUsername($username);
-        $user->setPasswordHash($passwordHash);
+        $user->setPasswordHash(md5($password));
         $user->setName($name);
         $user->setSurname($surname);
         $user->setAuthToken($authToken);
 
-        // Отправка заполненного пользователя
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -164,57 +182,63 @@ class UserController extends AbstractController
     }
 
     #[Route('/user/login', name: 'user_login')]
-    public function login(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function login(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ): Response {
         $authService = new AuthService($entityManager);
         $username = $request->get('username');
         $password = $request->get('password');
 
-        // Валидация имени пользователя
         if (empty($username) || mb_strlen($username) < self::MIN_LENGTH_USERNAME || mb_strlen($username) > self::MAX_LENGTH_USERNAME) {
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => 'Не верно заполнено поле с логином',
+                'error' => $translator->trans('error.invalid_username_field'),
             ]);
         }
 
-        // Валидация пароля
         if (empty($password) || mb_strlen($password) < self::MIN_LENGTH_PASSWORD || mb_strlen($password) > self::MAX_LENGTH_PASSWORD) {
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => 'Поле с паролем не должно быть пустым',
+                'error' => $translator->trans('error.invalid_password_field'),
             ]);
         }
 
-        // Проверяем вход пользователя с помощью AuthService
         if (!$authService->login($username, $password)) {
             return $this->json([
                 'success' => false,
                 'data' => [],
-                'error' => 'Неверный логин или пароль',
+                'error' => $translator->trans('error.invalid_credentials'),
             ]);
         }
 
-        // Если вход прошел успешно, получаем информацию о пользователе
-        $user = $authService->getUserInfoByAuthToken();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['username' => $username]);
 
         return $this->json([
             'success' => true,
-            'data' => ['user' => $user],  // возвращаем информацию о пользователе
+            'data' => [
+                'user' => [
+                    'id' => $user?->getId(),
+                    'username' => $user?->getUsername(),
+                    'name' => $user?->getName(),
+                    'surname' => $user?->getSurname(),
+                ],
+            ],
         ]);
     }
 
     #[Route('/user/logout', name: 'user_logout')]
-    public function logout(Request $request, EntityManagerInterface $entityManager): Response
+    public function logout(Request $request, EntityManagerInterface $entityManager, TranslatorInterface $translator): Response
     {
         $authService = new AuthService($entityManager);
         $authService->logout();
 
         return $this->json([
             'success' => true,
-            'data' => ['Выход из аккаунта завершён успешно']
+            'data' => [$translator->trans('auth.logout_success')]
         ]);
     }
 
@@ -224,6 +248,6 @@ class UserController extends AbstractController
         $entityManager->remove($user);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_user');
+        return $this->redirectToRoute('app_my_user');
     }
 }
