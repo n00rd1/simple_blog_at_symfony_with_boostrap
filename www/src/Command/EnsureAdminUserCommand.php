@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[AsCommand(
     name: 'app:ensure-admin-user',
@@ -17,8 +18,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class EnsureAdminUserCommand extends Command
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ) {
         parent::__construct();
     }
 
@@ -54,7 +57,7 @@ class EnsureAdminUserCommand extends Command
 
         $user->setName('Admin');
         $user->setSurname('Admin');
-        $user->setPasswordHash(md5($password));
+        $user->setPasswordHash($this->passwordHasher->hashPassword($user, $password));
         $this->entityManager->flush();
 
         $io->success(sprintf(

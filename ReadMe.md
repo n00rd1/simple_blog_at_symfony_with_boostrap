@@ -121,9 +121,9 @@ Server deployment is intentionally not hard-coded. Add a deploy job when the pro
 
 ## Current Technical Debt
 
-- Authentication is custom and currently uses `md5`; migrate it to Symfony Security and password hashers before production use.
-- Database schema has historical manual SQL migrations, so `doctrine:schema:validate` reports drift. Review generated diffs before applying them.
-- PHPUnit is configured, but meaningful functional tests still need to be added.
+- Authentication is still custom; move it fully to Symfony Security authenticators, roles, and CSRF protection before production use.
+- Add browser-level coverage for the JavaScript registration/login flows and toast notifications.
+- Add moderation and rate limiting around posts, likes, and comments before opening public write access.
 
 ## Links
 

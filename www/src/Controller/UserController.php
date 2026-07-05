@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -94,6 +95,7 @@ class UserController extends AbstractController
     public function create(
         Request $request,
         EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher,
         TranslatorInterface $translator
     ): Response {
         $username = $request->get('username');
@@ -168,7 +170,7 @@ class UserController extends AbstractController
 
         $user = new User();
         $user->setUsername($username);
-        $user->setPasswordHash(md5($password));
+        $user->setPasswordHash($passwordHasher->hashPassword($user, $password));
         $user->setName($name);
         $user->setSurname($surname);
         $user->setAuthToken($authToken);

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AuthService
 {
@@ -16,7 +17,8 @@ class AuthService
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
+        private readonly UserPasswordHasherInterface $passwordHasher
     )
     {
         $this->entityManager = $entityManager;
@@ -42,7 +44,7 @@ class AuthService
             return false;
         }
 
-        if ($user->getPasswordHash() !== md5($password)) {
+        if (!$this->isPasswordValid($user, $password)) {
             return false;
         }
 
@@ -102,5 +104,26 @@ class AuthService
     private function getAuthCookieValue(): ?string
     {
         return $this->requestStack->getCurrentRequest()?->cookies->get('auth_cookie') ?? $_COOKIE['auth_cookie'] ?? null;
+    }
+
+    private function isPasswordValid(User $user, string $password): bool
+    {
+        if ($this->passwordHasher->isPasswordValid($user, $password)) {
+            return true;
+        }
+
+        $passwordHash = $user->getPasswordHash();
+        if (!$this->isLegacyMd5Hash($passwordHash) || !hash_equals($passwordHash, md5($password))) {
+            return false;
+        }
+
+        $user->setPasswordHash($this->passwordHasher->hashPassword($user, $password));
+
+        return true;
+    }
+
+    private function isLegacyMd5Hash(?string $passwordHash): bool
+    {
+        return is_string($passwordHash) && preg_match('/^[a-f0-9]{32}$/i', $passwordHash) === 1;
     }
 }

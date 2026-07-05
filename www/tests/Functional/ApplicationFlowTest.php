@@ -38,6 +38,10 @@ class ApplicationFlowTest extends WebTestCase
     public function testUserCanRegisterLoginAndPublishPost(): void
     {
         $this->registerUser('johnny', 'secret', 'John', 'Smith');
+        $passwordHash = $this->getUserPasswordHash('johnny');
+
+        self::assertNotSame(md5('secret'), $passwordHash);
+        self::assertDoesNotMatchRegularExpression('/^[a-f0-9]{32}$/i', $passwordHash);
 
         $this->client->request('POST', '/user/login', [
             'username' => 'johnny',
@@ -60,6 +64,23 @@ class ApplicationFlowTest extends WebTestCase
         self::assertSelectorTextContains('.user-pill', 'johnny');
         self::assertSelectorTextContains('.feed-text', 'First public note');
         self::assertSelectorTextContains('#addArticleButton', 'Новая запись');
+    }
+
+    public function testLegacyMd5PasswordIsRehashedAfterSuccessfulLogin(): void
+    {
+        $this->getDatabaseConnection()->insert('users', [
+            'username' => 'legacy',
+            'password_hash' => md5('secret'),
+            'name' => 'Legacy',
+            'surname' => 'User',
+            'auth_token' => bin2hex(random_bytes(32)),
+        ]);
+
+        $this->loginUser('legacy', 'secret');
+        $passwordHash = $this->getUserPasswordHash('legacy');
+
+        self::assertNotSame(md5('secret'), $passwordHash);
+        self::assertDoesNotMatchRegularExpression('/^[a-f0-9]{32}$/i', $passwordHash);
     }
 
     public function testAuthenticatedUserCanCommentOnPost(): void
@@ -132,9 +153,27 @@ class ApplicationFlowTest extends WebTestCase
 
     private function purgeDatabase(): void
     {
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE comments, articles, users RESTART IDENTITY CASCADE');
+    }
+
+    private function getUserPasswordHash(string $username): string
+    {
+        $passwordHash = $this->getDatabaseConnection()->fetchOne(
+            'SELECT password_hash FROM users WHERE username = :username',
+            ['username' => $username]
+        );
+
+        self::assertIsString($passwordHash);
+
+        return $passwordHash;
+    }
+
+    private function getDatabaseConnection(): Connection
+    {
         /** @var Connection $connection */
         $connection = static::getContainer()->get(Connection::class);
-        $connection->executeStatement('TRUNCATE comments, articles, users RESTART IDENTITY CASCADE');
+
+        return $connection;
     }
 
     private function assertJsonResponseContains(array $expected): void
