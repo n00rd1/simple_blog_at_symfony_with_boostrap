@@ -314,6 +314,11 @@ body.app-body {
     box-shadow: var(--shadow);
 }
 
+.notification-toast {
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
 .modal-header,
 .modal-footer {
     border-color: var(--border);

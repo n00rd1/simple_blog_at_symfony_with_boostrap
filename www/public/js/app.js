@@ -1,6 +1,35 @@
 $(document).ready(function () {
     const pageMessages = document.body.dataset;
 
+    function showNotification(message, variant = 'danger') {
+        const toastElement = $('<div>')
+            .addClass(`toast notification-toast text-bg-${variant} border-0`)
+            .attr({
+                'role': 'alert',
+                'aria-live': 'assertive',
+                'aria-atomic': 'true'
+            });
+        const toastBody = $('<div>').addClass('d-flex');
+        const toastMessage = $('<div>').addClass('toast-body').text(message);
+        const closeButton = $('<button>')
+            .attr({
+                'type': 'button',
+                'data-bs-dismiss': 'toast',
+                'aria-label': 'Close'
+            })
+            .addClass('btn-close btn-close-white me-2 m-auto');
+
+        toastBody.append(toastMessage, closeButton);
+        toastElement.append(toastBody);
+        $('#notificationArea').append(toastElement);
+
+        const toast = new bootstrap.Toast(toastElement[0], {delay: 4200});
+        toastElement.on('hidden.bs.toast', function () {
+            toastElement.remove();
+        });
+        toast.show();
+    }
+
     $('#createUserSendButton').click(function () {
         $.ajax('/user/create', {
             'method': 'POST',
@@ -13,10 +42,12 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success === false) {
-                    alert(response.error);
+                    showNotification(response.error);
                 } else {
-                    alert(pageMessages.userCreatedMessage);
-                    location.reload();
+                    showNotification(pageMessages.userCreatedMessage, 'success');
+                    setTimeout(function () {
+                        location.reload();
+                    }, 700);
                 }
             }
         });
@@ -32,7 +63,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success === false) {
-                    alert(response.error);
+                    showNotification(response.error);
                 } else {
                     location.reload();
                 }
@@ -47,7 +78,7 @@ $(document).ready(function () {
             'data': {},
             success: function (response) {
                 if (response.success === false) {
-                    alert(response.error);
+                    showNotification(response.error);
                 } else {
                     location.reload();
                 }
@@ -64,7 +95,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success === false) {
-                    alert(response.error);
+                    showNotification(response.error);
                 } else {
                     location.reload();
                 }
@@ -82,7 +113,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success === false) {
-                    alert(response.error);
+                    showNotification(response.error);
                 } else {
                     location.reload();
                 }
