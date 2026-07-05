@@ -251,6 +251,37 @@ body.app-body {
     white-space: pre-wrap;
 }
 
+.feed-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.like-button {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    border-color: var(--border);
+    color: var(--muted);
+    background: #ffffff;
+}
+
+.like-button:hover,
+.like-button.liked {
+    border-color: #dc3b66;
+    color: #b61f49;
+    background: #fff0f4;
+}
+
+.like-button:disabled {
+    opacity: 0.62;
+}
+
+.like-icon {
+    line-height: 1;
+}
+
 .avatar-small {
     width: 34px;
     height: 34px;

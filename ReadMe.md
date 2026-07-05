@@ -21,6 +21,7 @@ n00rd1fy is a small Twitter-like Symfony application for publishing short posts,
 - User registration and login
 - Session-based authentication with CSRF-protected POST actions
 - Short post publishing for authenticated users
+- Like and unlike posts
 - Comments for authenticated users
 - Public feed for guests
 - User list and profile page

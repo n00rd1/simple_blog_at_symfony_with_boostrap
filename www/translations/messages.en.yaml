@@ -47,6 +47,9 @@ comments:
   create_title: "Leave a comment"
   comment_text: "Comment text"
 
+likes:
+  button: "Like"
+
 users:
   kicker: "Community"
   heading: "Users"

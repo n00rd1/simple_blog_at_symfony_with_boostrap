@@ -91,6 +91,41 @@ class ApplicationFlowTest extends WebTestCase
         self::assertSelectorTextContains('.comment-item p', 'Nice post');
     }
 
+    public function testAuthenticatedUserCanLikeAndUnlikePost(): void
+    {
+        $this->registerUser('liker', 'secret', 'Like', 'User');
+        $this->loginUser('liker', 'secret');
+        $this->createArticle('Post worth liking');
+
+        $this->postWithCsrf('/article/1/like', 'article-like');
+
+        self::assertResponseIsSuccessful();
+        $this->assertJsonResponseContains([
+            'success' => true,
+            'data' => [
+                'liked' => true,
+                'like_count' => 1,
+            ],
+        ]);
+
+        $this->client->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('.like-button', '1');
+        self::assertSelectorExists('.like-button.liked');
+
+        $this->postWithCsrf('/article/1/like', 'article-like');
+
+        self::assertResponseIsSuccessful();
+        $this->assertJsonResponseContains([
+            'success' => true,
+            'data' => [
+                'liked' => false,
+                'like_count' => 0,
+            ],
+        ]);
+    }
+
     public function testAuthenticatedUserCanLogout(): void
     {
         $this->registerUser('logout', 'secret', 'Log', 'User');
@@ -181,7 +216,7 @@ class ApplicationFlowTest extends WebTestCase
 
     private function purgeDatabase(): void
     {
-        $this->getDatabaseConnection()->executeStatement('TRUNCATE comments, articles, users RESTART IDENTITY CASCADE');
+        $this->getDatabaseConnection()->executeStatement('TRUNCATE article_likes, comments, articles, users RESTART IDENTITY CASCADE');
     }
 
     private function getUserPasswordHash(string $username): string

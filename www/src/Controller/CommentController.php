@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\User;
+use App\Repository\ArticleLikeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,8 +21,10 @@ class CommentController extends AbstractController
     public function showComments(
         $articleId,
         EntityManagerInterface $entityManager,
+        ArticleLikeRepository $likeRepository,
         TranslatorInterface $translator
     ): Response {
+        $user = $this->getUser();
         $articleRepository = $entityManager->getRepository(Article::class);
         $firstArticle = $articleRepository->find($articleId);
         if (!$firstArticle) {
@@ -35,9 +38,11 @@ class CommentController extends AbstractController
 
         return $this->render('comment/comment.html.twig', [
             'comments' => $comments,
-            'user' => $this->getUser(),
+            'user' => $user,
             'first_article' => $firstArticle,
             'commentCount' => count($comments),
+            'likeCounts' => $likeRepository->countByArticles([$firstArticle]),
+            'likedArticleIds' => $user instanceof User ? $likeRepository->findArticleIdsLikedByUser($user, [$firstArticle]) : [],
         ]);
     }
 

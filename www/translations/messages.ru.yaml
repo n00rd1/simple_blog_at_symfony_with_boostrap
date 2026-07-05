@@ -47,6 +47,9 @@ comments:
   create_title: "Оставить комментарий"
   comment_text: "Текст комментария"
 
+likes:
+  button: "Нравится"
+
 users:
   kicker: "Сообщество"
   heading: "Пользователи"

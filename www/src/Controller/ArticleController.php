@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\ArticleLike;
 use App\Entity\User;
+use App\Repository\ArticleLikeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,14 +18,17 @@ class ArticleController extends AbstractController
     const LENGTH_TEXT_STRING = 512;
 
     #[Route('/', name: 'app_article')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, ArticleLikeRepository $likeRepository): Response
     {
         $articles = $entityManager->getRepository(Article::class)->findBy([], ['createdAt' => 'DESC']);
+        $user = $this->getUser();
 
         return $this->render('article/article_list.html.twig', [
             'controller_name' => 'ArticleController',
             'articles' => $articles,
-            'user' => $this->getUser(),
+            'user' => $user,
+            'likeCounts' => $likeRepository->countByArticles($articles),
+            'likedArticleIds' => $user instanceof User ? $likeRepository->findArticleIdsLikedByUser($user, $articles) : [],
         ]);
     }
 
@@ -84,6 +89,57 @@ class ArticleController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['article_id' => $article->getId()]);
+    }
+
+    #[Route('/article/{id}/like', name: 'article_like', methods: ['POST'])]
+    public function toggleLike(
+        Article $article,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ArticleLikeRepository $likeRepository,
+        TranslatorInterface $translator
+    ): Response {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => $translator->trans('error.user_not_authorized'),
+            ]);
+        }
+
+        if (!$this->isCsrfTokenValid('article_like', (string) $request->request->get('_csrf_token'))) {
+            return $this->json([
+                'success' => false,
+                'data' => [],
+                'error' => $translator->trans('error.invalid_csrf'),
+            ]);
+        }
+
+        $existingLike = $likeRepository->findOneBy(['article' => $article, 'user' => $user]);
+        $liked = false;
+
+        if ($existingLike instanceof ArticleLike) {
+            $entityManager->remove($existingLike);
+        } else {
+            $like = new ArticleLike();
+            $like->setArticle($article);
+            $like->setUser($user);
+            $like->setCreatedAt(new \DateTime());
+            $entityManager->persist($like);
+            $liked = true;
+        }
+
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'data' => [
+                'liked' => $liked,
+                'like_count' => $likeRepository->countByArticle($article),
+            ],
+        ]);
     }
 
     #[Route('/article/{id}/delete', name: 'article_delete', methods: ['POST'])]

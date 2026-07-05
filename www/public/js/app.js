@@ -136,4 +136,39 @@ $(document).ready(function () {
         });
     });
 
+    $('.like-button').click(function () {
+        const button = $(this);
+        const articleId = button.data('article-id');
+
+        if (button.prop('disabled') || !articleId) {
+            return;
+        }
+
+        button.prop('disabled', true);
+
+        $.ajax(`/article/${articleId}/like`, {
+            'method': 'POST',
+            'dataType': 'json',
+            'data': {
+                '_csrf_token': pageMessages.csrfArticleLike
+            },
+            success: function (response) {
+                if (response.success === false) {
+                    showNotification(response.error);
+                    return;
+                }
+
+                const liked = Boolean(response.data.liked);
+
+                button.toggleClass('liked', liked);
+                button.attr('aria-pressed', liked ? 'true' : 'false');
+                button.find('.like-count').text(response.data.like_count);
+            },
+            error: handleRequestError,
+            complete: function () {
+                button.prop('disabled', false);
+            }
+        });
+    });
+
 });

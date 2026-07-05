@@ -39,9 +39,21 @@
                                 <span>{{ article.createdAt.format("d.m.Y H:i") }}</span>
                             </div>
                             <p class="feed-text">{{ article.text }}</p>
-                            <a class="btn btn-sm btn-outline-secondary"
-                               href="{{ path('app_comments', {'articleId': article.id}) }}"
-                               role="button">{{ 'comments.link'|trans }}</a>
+                            {% set articleLiked = article.id in likedArticleIds %}
+                            <div class="feed-actions">
+                                <button type="button"
+                                        class="btn btn-sm like-button {{ articleLiked ? 'liked' : '' }}"
+                                        data-article-id="{{ article.id }}"
+                                        aria-pressed="{{ articleLiked ? 'true' : 'false' }}"
+                                        {{ not user ? 'disabled' : '' }}>
+                                    <span class="like-icon" aria-hidden="true">♥</span>
+                                    <span class="like-count">{{ likeCounts[article.id]|default(0) }}</span>
+                                    <span>{{ 'likes.button'|trans }}</span>
+                                </button>
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   href="{{ path('app_comments', {'articleId': article.id}) }}"
+                                   role="button">{{ 'comments.link'|trans }}</a>
+                            </div>
                         </div>
                     </article>
                 {% else %}

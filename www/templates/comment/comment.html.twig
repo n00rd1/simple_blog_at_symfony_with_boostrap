@@ -21,6 +21,18 @@
                         <span>{{ first_article.createdAt.format("d.m.Y H:i") }}</span>
                     </div>
                     <p class="feed-text">{{ first_article.text }}</p>
+                    {% set articleLiked = first_article.id in likedArticleIds %}
+                    <div class="feed-actions">
+                        <button type="button"
+                                class="btn btn-sm like-button {{ articleLiked ? 'liked' : '' }}"
+                                data-article-id="{{ first_article.id }}"
+                                aria-pressed="{{ articleLiked ? 'true' : 'false' }}"
+                                {{ not user ? 'disabled' : '' }}>
+                            <span class="like-icon" aria-hidden="true">♥</span>
+                            <span class="like-count">{{ likeCounts[first_article.id]|default(0) }}</span>
+                            <span>{{ 'likes.button'|trans }}</span>
+                        </button>
+                    </div>
                 </div>
             </article>
 
