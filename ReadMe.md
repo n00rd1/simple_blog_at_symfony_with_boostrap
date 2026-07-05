@@ -123,7 +123,6 @@ Server deployment is intentionally not hard-coded. Add a deploy job when the pro
 
 - Authentication is custom and currently uses `md5`; migrate it to Symfony Security and password hashers before production use.
 - Database schema has historical manual SQL migrations, so `doctrine:schema:validate` reports drift. Review generated diffs before applying them.
-- `/product` is a test page and should be removed or separated from the main app.
 - PHPUnit is configured, but meaningful functional tests still need to be added.
 
 ## Links

@@ -90,23 +90,4 @@ $(document).ready(function () {
         });
     });
 
-    $('#addProductSendButton').click(function () {
-        $.ajax('/product/add', {
-            'method': 'POST',
-            'dataType': 'json',
-            'data': {
-                'name': $('#addProductModal #productNameInput').val(),
-                'price': $('#addProductModal #productPriceInput').val(),
-                'size': $('#addProductModal #productSizeInput').val()
-            },
-            success: function (response) {
-                if (response.success === false) {
-                    alert(response.error);
-                } else {
-                    alert(pageMessages.productCreatedMessage);
-                    location.reload();
-                }
-            }
-        });
-    });
 });

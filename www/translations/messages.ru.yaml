@@ -3,13 +3,11 @@ title:
   comments: "Комментарии"
   users: "Пользователи"
   account: "Мой аккаунт"
-  catalog: "Демо-каталог"
 
 nav:
   feed: "Лента"
   users: "Пользователи"
   account: "Мой аккаунт"
-  catalog: "Каталог"
   language: "Язык интерфейса"
 
 auth:
@@ -57,19 +55,8 @@ account:
   kicker: "Аккаунт"
   not_authorized: "Вы не авторизованы. Войдите в аккаунт или зарегистрируйтесь."
 
-catalog:
-  heading: "Демо-каталог"
-  name: "Наименование"
-  size: "Размер"
-  price: "Цена"
-  primary_action: "Основное действие"
-  secondary_action: "Дополнительное действие"
-  add_product: "Добавить товар"
-  name_placeholder: "Например: летние джинсы"
-
 alert:
   user_created: "Пользователь успешно зарегистрирован."
-  product_created: "Товар добавлен."
 
 validation:
   field_required: "Поле «%field%» обязательно для заполнения."

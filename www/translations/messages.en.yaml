@@ -3,13 +3,11 @@ title:
   comments: "Comments"
   users: "Users"
   account: "My Account"
-  catalog: "Demo Catalog"
 
 nav:
   feed: "Feed"
   users: "Users"
   account: "My account"
-  catalog: "Catalog"
   language: "Interface language"
 
 auth:
@@ -57,19 +55,8 @@ account:
   kicker: "Account"
   not_authorized: "You are not authorized. Log in or create an account."
 
-catalog:
-  heading: "Demo catalog"
-  name: "Name"
-  size: "Size"
-  price: "Price"
-  primary_action: "Primary action"
-  secondary_action: "Secondary action"
-  add_product: "Add product"
-  name_placeholder: "For example: summer jeans"
-
 alert:
   user_created: "User registered successfully."
-  product_created: "Product added."
 
 validation:
   field_required: "The \"%field%\" field is required."
